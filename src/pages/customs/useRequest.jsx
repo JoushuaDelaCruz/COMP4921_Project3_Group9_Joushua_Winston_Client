@@ -15,19 +15,27 @@ const useRequest = () => {
     return config;
   };
 
-  const getRequest = async (url, data = undefined) => {
+  const urlConstructor = (endpoint) => {
+    return import.meta.env.VITE_SERVER_URL + endpoint;
+  };
+
+  const getRequest = async (endpoint, data = undefined) => {
     try {
+      const url = urlConstructor(endpoint);
       const response = await axios.get(url, getConfig(data));
+      return response.data;
     } catch (e) {
-      console.log(e);
+      return e.response.data;
     }
   };
 
-  const postRequest = async (url, data = undefined) => {
+  const postRequest = async (endpoint, data = undefined) => {
     try {
+      const url = urlConstructor(endpoint);
       const response = await axios.post(url, getConfig(data));
+      return response.data;
     } catch (e) {
-      console.log(e);
+      return e.response.data;
     }
   };
 
