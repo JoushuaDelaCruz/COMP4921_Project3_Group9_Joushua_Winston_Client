@@ -1,7 +1,12 @@
 import React from "react";
+import CalendarComponent from "./Components/CalendarComponent";
 
 const App = () => {
-  return <h1 className="text-3xl font-bold underline">App</h1>;
+  return (
+    <div>
+      <CalendarComponent/>
+    </div>
+  );
 };
 
 export default App;
