@@ -41,13 +41,18 @@ const useRequest = () => {
   };
 
   const logInRequest = async (credentials) => {
-    const url = import.meta.env.VITE_API + "user/login";
-    const sessionID = await postRequest(url, credentials);
-    if (sessionID) {
-      setUpCookie(sessionID);
-      return true;
+    try {
+      const endpoint = "auth/login";
+      const sessionID = await postRequest(endpoint, credentials);
+      if (sessionID) {
+        setUpCookie(sessionID);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      alert("Internal error, please try again");
+      return false;
     }
-    return false;
   };
 
   const logOutRequest = async () => {
