@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import Home from "./pages/Home";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
@@ -10,11 +10,13 @@ import {
 } from "react-router-dom";
 
 const App = () => {
+  const [user, setUser] = useState(null);
+
   const routes = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
         <Route index element={<Home />} />
-        <Route path="/login" exact element={<LogIn />} />
+        <Route path="/login" exact element={<LogIn setUser={setUser} />} />
         <Route path="/signup" exact element={<SignUp />} />
       </Route>
     )
