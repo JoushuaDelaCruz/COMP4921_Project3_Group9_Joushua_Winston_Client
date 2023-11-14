@@ -20,26 +20,18 @@ const useRequest = () => {
   };
 
   const getRequest = async (endpoint, data = undefined) => {
-    try {
-      const url = urlConstructor(endpoint);
-      const response = await axios.get(url, getConfig(data));
-      return response.data;
-    } catch (e) {
-      return e.response.data;
-    }
+    const url = urlConstructor(endpoint);
+    const response = await axios.get(url, getConfig(data));
+    return response.data;
   };
 
   const postRequest = async (endpoint, data = undefined) => {
-    try {
-      const url = urlConstructor(endpoint);
-      const response = await axios.post(url, getConfig(data));
-      return response.data;
-    } catch (e) {
-      return e.response.data;
-    }
+    const url = urlConstructor(endpoint);
+    const response = await axios.post(url, getConfig(data));
+    return response.data;
   };
 
-  const setUpCookie = () => {
+  const setUpCookie = (sessionID) => {
     const expireTime = 60 * 60 * 1000;
     setCookie("session", sessionID, {
       path: "/",
@@ -52,7 +44,7 @@ const useRequest = () => {
     const url = import.meta.env.VITE_API + "user/login";
     const sessionID = await postRequest(url, credentials);
     if (sessionID) {
-      setUpCookie();
+      setUpCookie(sessionID);
       return true;
     }
     return false;
