@@ -5,43 +5,43 @@ import useRequest from "./customs/useRequest";
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isInvalid, setIsInvalid] = useState(null);
+  const [errMsg, setErrMsg] = useState("");
   const { logInRequest } = useRequest();
   const navigation = useNavigate();
 
   const validateEmail = async () => {
     if (email.length < 1 || !email.includes("@")) {
-      setIsInvalid(true);
+      setErrMsg("Please enter valid credentials");
       return;
     }
-    setIsInvalid(false);
+    setErrMsg("");
     return;
   };
 
   const validatePassword = async () => {
     if (password.length < 1) {
-      setIsInvalid(true);
+      setErrMsg("Please enter valid credentials");
       return;
     }
-    setIsInvalid(false);
+    setErrMsg("");
     return;
   };
 
   const makeLoginRequest = async () => {
     const credentials = { email, password };
-    const success = await logInRequest(credentials);
-    if (success) {
+    const responseMsg = await logInRequest(credentials);
+    if (!responseMsg) {
       goToHome();
       return;
     } else {
-      setIsInvalid(true);
+      setErrMsg(responseMsg);
     }
   };
 
   const login = async () => {
     await validateEmail();
     await validatePassword();
-    if (isInvalid || isInvalid === null) {
+    if (errMsg !== "") {
       return;
     }
     await makeLoginRequest();
@@ -65,20 +65,18 @@ const LogIn = () => {
         <div
           className={
             "flex flex-col gap-8 items-center justify-center px-5 font-medium text-sm" +
-            (isInvalid ? " text-red-500" : " text-gray-400")
+            (errMsg ? " text-red-500" : " text-gray-400")
           }
         >
-          {isInvalid && (
-            <h2 className="text-base animate-bounce-twice">
-              Incorrect credentials, please try again.
-            </h2>
+          {errMsg && (
+            <h2 className="text-base animate-bounce-twice">{errMsg}</h2>
           )}
           <div className="flex flex-col gap-1 w-full max-w-sm">
             <label htmlFor="email">Email</label>
             <input
               className={
                 "ring-2 rounded px-3 py-2 focus:outline-none focus:ring-2 text-black focus:ring-green-600 transform transition-color duration-200" +
-                (isInvalid ? " ring-red-500" : "ring-gray-200 ")
+                (errMsg ? " ring-red-500" : "ring-gray-200 ")
               }
               placeholder="Enter your email"
               type="email"
@@ -93,7 +91,7 @@ const LogIn = () => {
             <input
               className={
                 "ring-2 rounded px-3 py-2 focus:outline-none focus:ring-2 text-black focus:ring-green-600 transform transition-color duration-200" +
-                (isInvalid ? " ring-red-500" : "ring-gray-200 ")
+                (errMsg ? " ring-red-500" : "ring-gray-200 ")
               }
               placeholder="Enter your password"
               type="password"
