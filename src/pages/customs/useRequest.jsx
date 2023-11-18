@@ -2,7 +2,7 @@ import { useCookies } from "react-cookie";
 import axios from "axios";
 
 const useRequest = () => {
-  const [cookie, setCookie, removeCookie] = useCookies(["session"]);
+  const [, setCookie, removeCookie] = useCookies(["token"]);
 
   const getConfig = (data) => {
     const config = {
@@ -10,6 +10,7 @@ const useRequest = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
       data: data,
     };
     return config;
@@ -31,9 +32,9 @@ const useRequest = () => {
     return response.data;
   };
 
-  const setUpCookie = (sessionID) => {
+  const setUpCookie = (token) => {
     const expireTime = 60 * 60 * 1000;
-    setCookie("session", sessionID, {
+    setCookie("token", token, {
       path: "/",
       maxAge: expireTime,
       sameSite: "strict",
@@ -43,20 +44,19 @@ const useRequest = () => {
   const logInRequest = async (credentials) => {
     try {
       const endpoint = "auth/login";
-      const sessionID = await postRequest(endpoint, credentials);
-      if (sessionID) {
-        setUpCookie(sessionID);
-        return true;
+      const response = await postRequest(endpoint, credentials);
+      if (response.token) {
+        setUpCookie(response.token);
+        return null;
       }
-      return false;
+      return response.message;
     } catch (e) {
-      alert("Internal error, please try again");
-      return false;
+      return e.response.data.message;
     }
   };
 
   const logOutRequest = async () => {
-    console.log("Logging out");
+    removeCookie("token");
   };
 
   return { getRequest, postRequest, logInRequest, logOutRequest };
