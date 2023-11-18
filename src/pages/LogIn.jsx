@@ -5,11 +5,29 @@ import useRequest from "./customs/useRequest";
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isInvalid, setIsInvalid] = useState(false);
+  const [isInvalid, setIsInvalid] = useState(null);
   const { logInRequest } = useRequest();
   const navigation = useNavigate();
 
-  const login = async () => {
+  const validateEmail = async () => {
+    if (email.length < 1 || !email.includes("@")) {
+      setIsInvalid(true);
+      return;
+    }
+    setIsInvalid(false);
+    return;
+  };
+
+  const validatePassword = async () => {
+    if (password.length < 1) {
+      setIsInvalid(true);
+      return;
+    }
+    setIsInvalid(false);
+    return;
+  };
+
+  const makeLoginRequest = async () => {
     const credentials = { email, password };
     const success = await logInRequest(credentials);
     if (success) {
@@ -18,6 +36,15 @@ const LogIn = () => {
     } else {
       setIsInvalid(true);
     }
+  };
+
+  const login = async () => {
+    await validateEmail();
+    await validatePassword();
+    if (isInvalid || isInvalid === null) {
+      return;
+    }
+    await makeLoginRequest();
   };
 
   const goToHome = () => {
@@ -37,8 +64,8 @@ const LogIn = () => {
         </header>
         <div
           className={
-            "flex flex-col gap-6 items-center justify-center px-5 font-medium text-sm" +
-            (isInvalid ? " text-red-500" : "text-gray-400")
+            "flex flex-col gap-8 items-center justify-center px-5 font-medium text-sm" +
+            (isInvalid ? " text-red-500" : " text-gray-400")
           }
         >
           {isInvalid && (
@@ -50,7 +77,7 @@ const LogIn = () => {
             <label htmlFor="email">Email</label>
             <input
               className={
-                "ring-2 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 transform transition-all duration-500 hover:scale-x-105" +
+                "ring-2 rounded px-3 py-2 focus:outline-none focus:ring-2 text-black focus:ring-green-600 transform transition-color duration-200" +
                 (isInvalid ? " ring-red-500" : "ring-gray-200 ")
               }
               placeholder="Enter your email"
@@ -65,7 +92,7 @@ const LogIn = () => {
             <label htmlFor="password">Password</label>
             <input
               className={
-                "ring-2 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 transform transition-all duration-500 hover:scale-x-105" +
+                "ring-2 rounded px-3 py-2 focus:outline-none focus:ring-2 text-black focus:ring-green-600 transform transition-color duration-200" +
                 (isInvalid ? " ring-red-500" : "ring-gray-200 ")
               }
               placeholder="Enter your password"
