@@ -18,11 +18,9 @@ const SignUp = () => {
       setUsernameErr("Please enter a username");
       return false;
     }
-    const usernameExists = await getRequest(
-      `auth/checkUsernameExists/${username}`
-    );
-    if (usernameExists) {
-      setUsernameErr("Username already exists!");
+    const response = await getRequest(`auth/checkUsernameExists/${username}`);
+    if (response.is_exists) {
+      setUsernameErr(response.message);
       return false;
     }
     setUsernameErr(null);
@@ -63,9 +61,9 @@ const SignUp = () => {
       setEmailErr("Please enter an email");
       return false;
     }
-    const emailExists = await getRequest(`auth/checkEmailExists/${email}`);
-    if (emailExists) {
-      setEmailErr("Email already exists!");
+    const response = await getRequest(`auth/checkEmailExists/${email}`);
+    if (response.is_exists) {
+      setEmailErr(response.message);
       return false;
     }
     setEmailErr(null);
@@ -82,7 +80,7 @@ const SignUp = () => {
         console.log("fail");
       }
     } catch (error) {
-      if (error.response.status === 409) {
+      if (error.response.status === 403) {
         console.log("Username or email already in exists");
       }
     }
