@@ -2,7 +2,7 @@ import { useCookies } from "react-cookie";
 import axios from "axios";
 
 const useRequest = () => {
-  const [, setCookie, removeCookie] = useCookies(["token"]);
+  const [cookie, setCookie, removeCookie] = useCookies(["token"]);
 
   const getConfig = (data) => {
     const config = {
@@ -12,6 +12,7 @@ const useRequest = () => {
       },
       withCredentials: true,
       data: data,
+      cookie: cookie,
     };
     return config;
   };
@@ -21,15 +22,46 @@ const useRequest = () => {
   };
 
   const getRequest = async (endpoint, data = undefined) => {
-    const url = urlConstructor(endpoint);
-    const response = await axios.get(url, getConfig(data));
-    return response.data;
+    try {
+      const url = urlConstructor(endpoint);
+      const response = await axios.get(url, getConfig(data));
+      return response.data;
+    } catch (e) {
+      if (e.response.status === 404) {
+        window.location.href = "/404";
+        return;
+      }
+      if (e.response.status === 401) {
+        window.location.href = "/login";
+        return;
+      }
+      if (e.response.status === 403) {
+        throw e;
+      }
+      alert(e.response.data.message);
+    }
   };
 
   const postRequest = async (endpoint, data = undefined) => {
-    const url = urlConstructor(endpoint);
-    const response = await axios.post(url, getConfig(data));
-    return response.data;
+    try {
+      const url = urlConstructor(endpoint);
+      const response = await axios.post(url, getConfig(data));
+      return response.data;
+    } catch (e) {
+      console.log(e);
+      if (e.response.status === 404) {
+        window.location.href = "/404";
+        return;
+      }
+      if (e.response.status === 401) {
+        window.location.href = "/login";
+        return;
+      }
+      if (e.response.status === 403) {
+        throw e;
+      }
+      alert(e.response.data.message);
+    }
   };
 
   const setUpCookie = (token) => {
