@@ -105,7 +105,7 @@ const SignUp = () => {
   return (
     <div className="h-screen w-screen flex flex-col items-center gap-5 bg-mint-cream sm:justify-center font-roboto">
       <div className="w-full flex flex-col gap-5 bg-feldgrau rounded-sm sm:rounded-md text-white max-w-2xl py-5 shadow-lg shadow-slate-800">
-        <header className="text-3xl border-b text-center border-gray-400 pb-5 font-semibold w-full">
+        <header className="text-4xl border-b text-center text-celadon font-logo border-gray-400 pb-5 font-semibold w-full">
           <h1
             className=" hover:transform hover:transition-all hover:duration-100 hover:animate-bounce cursor-pointer"
             onClick={goToHome}
@@ -180,7 +180,7 @@ const SignUp = () => {
         </div>
         <footer className="w-full flex justify-center mt-2">
           <button
-            className=" bg-green-500 text-white rounded-full px-10 py-2 font-medium hover:bg-green-700 focus:bg-green-700 active:bg-green-900 transform transition-colors duration-200"
+            className="bg-celadon text-feldgrau rounded-full px-10 py-2 font-medium hover:bg-celadon/70 focus:bg-celadon/70 active:bg-battleship-grey transform transition-colors duration-200"
             onClick={signUp}
           >
             {" "}
@@ -190,10 +190,7 @@ const SignUp = () => {
       </div>
       <h2 className="flex gap-1 text-base font-base font-roboto pt-4">
         Have an account?
-        <Link
-          to="/login"
-          className="font-medium text-green-600 hover:underline"
-        >
+        <Link to="/login" className="font-medium text-blue-600 hover:underline">
           Log In
         </Link>
       </h2>
