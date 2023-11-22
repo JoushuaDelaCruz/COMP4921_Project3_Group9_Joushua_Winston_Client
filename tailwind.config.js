@@ -5,6 +5,7 @@ export default {
     extend: {
       fontFamily: {
         roboto: ["Roboto Slab"],
+        logo: ["Kaushan Script"],
       },
       colors: {
         feldgrau: "#3c493f",
