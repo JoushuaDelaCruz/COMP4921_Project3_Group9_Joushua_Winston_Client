@@ -12,19 +12,19 @@ const LogIn = () => {
   const validateEmail = async () => {
     if (email.length < 1 || !email.includes("@")) {
       setErrMsg("Please enter valid credentials");
-      return;
+      return false;
     }
     setErrMsg("");
-    return;
+    return true;
   };
 
   const validatePassword = async () => {
     if (password.length < 1) {
       setErrMsg("Please enter valid credentials");
-      return;
+      return false;
     }
     setErrMsg("");
-    return;
+    return true;
   };
 
   const makeLoginRequest = async () => {
@@ -39,9 +39,9 @@ const LogIn = () => {
   };
 
   const login = async () => {
-    await validateEmail();
-    await validatePassword();
-    if (errMsg !== "") {
+    const isUsernameValidated = await validateEmail();
+    const isPasswordValidated = await validatePassword();
+    if (!isUsernameValidated || !isPasswordValidated) {
       return;
     }
     await makeLoginRequest();
@@ -54,12 +54,12 @@ const LogIn = () => {
   return (
     <div className="h-screen w-screen flex flex-col items-center gap-5 bg-mint-cream sm:justify-center">
       <div className="w-full flex flex-col gap-5 font-roboto bg-feldgrau rounded-sm sm:rounded-md text-white max-w-2xl py-5 shadow-lg shadow-slate-800">
-        <header className="text-3xl border-b text-center border-gray-400 pb-5 font-roboto font-semibold w-full">
+        <header className="text-4xl border-b text-center border-gray-400 pb-5 font-roboto font-semibold w-full">
           <h1
-            className=" hover:transform hover:transition-all hover:duration-100 hover:animate-bounce cursor-pointer"
+            className=" hover:transform hover:transition-all hover:duration-100 text-celadon hover:animate-bounce cursor-pointer font-logo"
             onClick={goToHome}
           >
-            EvenTogether
+            MakeItHappen
           </h1>
         </header>
         <div
@@ -104,7 +104,7 @@ const LogIn = () => {
         </div>
         <footer className="w-full flex justify-center mt-5">
           <button
-            className=" bg-green-500 text-white rounded-full px-10 py-2 font-medium hover:bg-green-700 focus:bg-green-700 active:bg-green-900 transform transition-colors duration-200"
+            className=" bg-celadon text-feldgrau rounded-full px-10 py-2 font-medium hover:bg-celadon/70 focus:bg-celadon/70 active:bg-battleship-grey transform transition-colors duration-200"
             onClick={login}
           >
             {" "}
@@ -116,7 +116,7 @@ const LogIn = () => {
         Don't have an yet?
         <Link
           to="/signUp"
-          className="font-medium text-green-600 hover:underline"
+          className="font-medium text-blue-600 hover:underline"
         >
           Sign up
         </Link>
