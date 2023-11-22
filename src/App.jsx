@@ -17,13 +17,8 @@ const App = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const sessionValidity = await getRequest("auth/verify");
-      if (!sessionValidity) {
-        setUserAuth(false);
-        await logOutRequest();
-      } else {
-        setUserAuth(true);
-      }
+      const sessionValidity = await getRequest("verify");
+      setUserAuth(sessionValidity);
     };
 
     checkSession();
