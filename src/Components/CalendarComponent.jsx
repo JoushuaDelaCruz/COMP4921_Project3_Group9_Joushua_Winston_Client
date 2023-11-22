@@ -1,80 +1,160 @@
-import React from 'react';
-import { Calendar, Whisper, Popover, Badge } from 'rsuite';
+import React, { useEffect, useState } from "react";
+import Fullcalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import listPlugin from "@fullcalendar/list";
 
-// * Testing Purposes --> Dates show on the 10th and 15th
-function getDayList(date) {
-  const day = date.getDate();
-  switch (day) {
-    case 10:
-      return [
-        { time: '10:30 am', title: 'Meeting' },
-        { time: '12:00 pm', title: 'Lunch' }
-      ];
-    case 15:
-      return [
-        { time: '09:30 pm', title: 'Products Introduction Meeting' },
-        { time: '12:30 pm', title: 'Client entertaining' },
-        { time: '02:00 pm', title: 'Product design discussion' },
-        { time: '05:00 pm', title: 'Product test and acceptance' },
-        { time: '06:30 pm', title: 'Reporting' },
-        { time: '10:00 pm', title: 'Going home to walk the dog' }
-      ];
-    default:
-      return [];
-  }
-}
+export default function Calendar() {
+    const [events, setEvents] = useState([
+      // { // this object will be "parsed" into an Event Object
+      //   title: 'The Title', // a property!
+      //   start: '2023-11-22', // a property!
+      //   end: '2023-11-23', // a property! ** see important note below about 'end' **
+      //   allDay: false
+      // }
+    ]);
 
-export default function CalendarComponent() {
-  const currentDate = new Date();
-  function renderCell(date) {
-    const list = getDayList(date);
-    const displayList = list.filter((item, index) => index < 2);
+    const [modalHidden, setModalHidden] = useState("hidden");
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalStartDate, setModalStartDate] = useState(new Date().toISOString());
+    const [modalEndDate, setModalEndDate] = useState(new Date().toISOString());
+    const [allDay, setAllDay] = useState(false);
+    const [calendarApi, setCalendarApi] = useState(null);
+    useEffect(() => {
+    }, [events])
+    
 
-    // * If list of 
-    if (list.length) {
-      const moreCount = list.length - displayList.length;
-      const moreItem = (
-        <li>
-          <Whisper
-            placement="top"
-            trigger=""
-            speaker={
-              <Popover>
-                {list.map((item, index) => (
-                  <p key={index}>
-                    <b>{item.time}</b> - {item.title}
-                  </p>
-                ))}
-              </Popover>
-            }
-          >
-            <a>{moreCount} more</a>
-          </Whisper>
-        </li>
-      );
-
-      return (
-        <ul className="p-0 text-left list-none">
-          {displayList.map((item, index) => (
-            <li key={index} className=" overflow-hidden text-ellipsis whitespace-nowrap">
-              <Badge className=" align-top mt-8 w-6 h-6"/> <b>{item.time}</b> - {item.title}
-            </li>
-          ))}
-          {moreCount ? moreItem : null}
-        </ul>
-      );
+    const HandleEvents = (events) => {
+      setEvents(events);
     }
 
-    return null;
-  }
+    const handleSubmitAddEvent = (e) => {
+      e.preventDefault();
+      let calendar = calendarApi;
 
-  return <Calendar
-          bordered 
-          renderCell={renderCell} 
-          onSelect={(date) => {console.log(date)}} // * Add function to add event --> Maybe have a selected variable, and if its equal to the next click (double click) then add event
-          onMonthChange={(date) => {console.log(date.getMonth())}} // * Could use this for styling individual cells
-          // onChange={(date) => {console.log(date)}}
-          // cellClassName={date => (date.getMonth() === currentDate.getMonth() ? 'bg-gray-700 text-white hover:bg-gray-800' : 'bg-gray-500 hover:bg-gray-800')}
-          // className="bg-gray-800 text-white"
-          />;
-};
+      calendar.addEvent({
+        title: modalTitle,
+        end: modalEndDate,
+        start: modalStartDate,
+        allDay: allDay
+      })
+      resetModal();
+    }
+
+    const handleAllDayCheck = () => {
+      setAllDay(!allDay);
+    }
+
+    const toggleModal = (selectInfo) => {
+      if(modalHidden) {
+        setCalendarApi(selectInfo.view.calendar);
+        setModalHidden("");
+
+        // Start modal with clicked date 
+        let startString = new Date(selectInfo.startStr).toISOString();
+        startString = startString.substring(0, startString.length - 1);
+        setModalStartDate(startString);
+        setModalEndDate(startString);
+
+      } else {
+        setModalHidden("hidden");
+      }
+    }
+
+    const resetModal = () => {
+      setModalTitle("");
+      setModalStartDate();
+      setModalEndDate();
+      toggleModal();
+    }
+
+    const AddEventModal = () => {
+        return (
+          <div className={` shadow-lg shadow-black max-w-lg border border-black rounded-lg bg-white px-10 py-4 absolute top-[40%] left-[50%] translate-x-[-50%] transalte-y-[-50%] z-10 ${modalHidden}`}>
+            <form onSubmit={handleSubmitAddEvent}>
+              <div>
+                Add Event
+              </div>
+              <div>
+                <label>Title</label>
+                <input type="text" name="title" className="border border-black rounded-lg m-2" value={modalTitle} onChange={(e) => {setModalTitle(e.target.value)}} required/>
+              </div>
+
+              <div>
+                <label>Start Date</label>
+                <input type="datetime-local" name="title" className="border border-black rounded-lg m-2" value={modalStartDate} onChange={(e) =>setModalStartDate(e.target.value)}/>
+              </div>
+
+              <div>
+                <label>End Date</label>
+                <input type="datetime-local" name="title" className="border border-black rounded-lg m-2" value={modalEndDate} onChange={(e) =>setModalEndDate(e.target.value)}/>
+              </div>
+              <div>
+                <label>All Day</label>
+                <input type="checkbox" checked={allDay} onChange={handleAllDayCheck}/>
+              </div>
+              <div>
+                <button type="submit" className="border border-black rounded-md px-2">Add</button>
+                <button type="button" onClick={resetModal} className="border border-black rounded-md px-2">Cancel</button>
+              </div>
+            </form>
+          </div>
+        )
+    }
+
+    const renderEventContent = (eventInfo)  => {
+      console.log(eventInfo);
+      const startHour = (eventInfo.event.start.getHours() % 12 || 12).toString();
+      const startPrefix = eventInfo.event.start.getHours() < 12 ? "am" : "pm";
+      const startMinute = eventInfo.event.start.getMinutes() > 0 ? `:${(eventInfo.event.start.getMinutes()).toString().padStart(2, 0) + startPrefix}`  : startPrefix;
+      return (
+        <div>
+          <b>{startHour + startMinute}</b>
+          <i> - {eventInfo.event.title}</i>
+        </div>
+      )
+    }
+
+    const handleDeleteEvent = (eventInfo) => {
+      console.log(eventInfo);
+      const deleteConfirm = confirm("Are you sure you want to delete this event?");
+      if(deleteConfirm) {
+        eventInfo.event.remove();
+      }
+    }
+
+
+    return(
+      <>
+        <div className={`fixed w-full h-full${modalHidden}`} onClick={toggleModal}></div>
+        <Fullcalendar
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+          height={'90vh'}
+          initialView={"dayGridMonth"} // [dayGridXXX, timeGridXXX, listXXX]
+          headerToolbar={{
+              start:"today prev,next",
+              center: "title",
+              end: "dayGridMonth,timeGridWeek,timeGridDay,listDay",
+          }}
+          editable={true}
+          selectable={true}
+          select={toggleModal}
+          eventClick={handleDeleteEvent}
+          dayMaxEvents={true}
+          viewClassNames={""}
+          dayCellClassNames={date => ("")}
+          nowIndicatorClassNames={"bg-red-600"}
+          eventDrop={event => (console.log(event.event))}
+          initialEvents={events}
+          eventsSet={HandleEvents}
+          eventContent={renderEventContent}
+          displayEventEnd={true}
+          forceEventDuration={true}
+        />
+        <AddEventModal/>
+
+      </>
+    )
+
+}
