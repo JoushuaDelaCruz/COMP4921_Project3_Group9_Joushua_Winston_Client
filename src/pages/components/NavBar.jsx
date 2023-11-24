@@ -11,22 +11,22 @@ const NavBar = ({}) => {
       </div>
       <div className="flex justify-between w-full sm:justify-start sm:flex-col gap-5">
         <NavbarButtons
-          icon="fa-bell"
-          order="order-2"
+          icon={"fa-bell"}
+          order={2}
           isActive={false}
-          description={"Notifications"}
+          description={"notifications"}
         />
         <NavbarButtons
           icon="fa-calendar"
           isActive={true}
-          order="order-1"
-          description={"Event Calendar"}
+          order={1}
+          description={"calendar"}
         />
         <NavbarButtons
-          icon="fa-user"
-          order="order-3"
+          icon={"fa-user"}
+          order={3}
           isActive={false}
-          description={"Profile & Friends"}
+          description={"profile"}
         />
       </div>
     </div>
