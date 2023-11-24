@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
 
 const Home = ({ user }) => {
-  console.log(user);
   return user ? AuthenticatedHomePage() : NonAuthenticatedHomePage();
 };
 
@@ -57,7 +56,7 @@ const AuthenticatedHomePage = () => {
           MakeItHappen
         </h1>
       </nav>
-      <NavBar />
+      <NavBar currentPage={2} />
       <section className="flex-1">hi!</section>
     </main>
   );
