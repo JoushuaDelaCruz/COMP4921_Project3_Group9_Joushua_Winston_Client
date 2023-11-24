@@ -17,11 +17,12 @@ const App = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const sessionValidity = await getRequest("verify");
-      if (!sessionValidity) {
+      const response = await getRequest("verify");
+      if (!response.authenticated) {
         setUser(null);
         return;
       }
+      setUser(response.user);
     };
 
     checkSession();
@@ -34,10 +35,12 @@ const App = () => {
     return null;
   };
 
-  const profileLoader = async ({ params }) => {
-    const endpoint = `profile/${params.username}`;
-    const response = await getRequest(endpoint);
-    return response;
+  const profileLoader = async () => {
+    if (!user) {
+      window.location.href = "/";
+      return null;
+    }
+    return null;
   };
 
   const routes = createBrowserRouter(
@@ -46,16 +49,21 @@ const App = () => {
         <Route index element={<Home user={user} />} />
         <Route
           path="/login"
-          loader={isUser}
+          loader={() => isUser()}
           exact
           element={<LogIn setUser={setUser} />}
         />
-        <Route path="/signup" loader={isUser} exact element={<SignUp />} />
         <Route
-          path="/profile/:username"
+          loader={() => profileLoader()}
+          path="/profile"
           exact
-          loader={profileLoader}
           element={<Profile user={user} />}
+        />
+        <Route
+          path="/signup"
+          loader={() => isUser()}
+          exact
+          element={<SignUp />}
         />
       </Route>
     )
