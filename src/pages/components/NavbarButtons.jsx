@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const NavbarButtons = ({ icon, isActive, order, description }) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
-    <button
+    <Link
+      to={`/${description}`}
       disabled={isActive}
-      className={`p-2 text-feldgrau rounded-full gap-5 sm:${order} sm:flex sm:items-center sm:rounded-md`}
+      className={`p-2 text-feldgrau rounded-full gap-5 sm:order-${order} sm:flex sm:items-center sm:rounded-md`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -15,14 +17,14 @@ const NavbarButtons = ({ icon, isActive, order, description }) => {
         } ${icon} fa-xl`}
       ></i>
       <h2
-        className={`hidden sm:block ${
+        className={`hidden sm:block capitalize ${
           (isHovered || isActive) && "font-semibold"
         }`}
       >
         {" "}
         {description}{" "}
       </h2>
-    </button>
+    </Link>
   );
 };
 
