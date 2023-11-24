@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
 
-const Home = ({ userAuth }) => {
-  return userAuth ? AuthenticatedHomePage() : NonAuthenticatedHomePage();
+const Home = ({ user }) => {
+  console.log(user);
+  return user ? AuthenticatedHomePage() : NonAuthenticatedHomePage();
 };
 
 const NonAuthenticatedHomePage = () => {
