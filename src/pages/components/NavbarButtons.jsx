@@ -5,7 +5,7 @@ const NavbarButtons = ({ icon, isActive, order, description }) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <Link
-      to={`/${description}`}
+      to={`/${description === "calendar" ? "" : description}`}
       disabled={isActive}
       className={`p-2 text-feldgrau rounded-full gap-5 sm:order-${order} sm:flex sm:items-center sm:rounded-md`}
       onMouseEnter={() => setIsHovered(true)}
