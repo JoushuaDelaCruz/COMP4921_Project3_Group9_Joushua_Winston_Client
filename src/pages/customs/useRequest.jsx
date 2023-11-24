@@ -94,11 +94,11 @@ const useRequest = () => {
       const response = await postRequest(endpoint, credentials);
       if (response.success) {
         setUpCookie(response.session);
-        return null;
+        return response;
       }
-      return response.message;
+      return response;
     } catch (e) {
-      return e.response.data.message;
+      return e.response.message;
     }
   };
 
