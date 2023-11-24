@@ -12,20 +12,23 @@ import {
 } from "react-router-dom";
 
 const App = () => {
-  const [userAuth, setUserAuth] = useState(false);
+  const [user, setUser] = useState(null);
   const { getRequest, logOutRequest, logInRequest } = useRequest();
 
   useEffect(() => {
     const checkSession = async () => {
       const sessionValidity = await getRequest("verify");
-      setUserAuth(sessionValidity);
+      if (!sessionValidity) {
+        setUser(null);
+        return;
+      }
     };
 
     checkSession();
   }, [logOutRequest, logInRequest]);
 
-  const isUserAuth = async () => {
-    if (userAuth) {
+  const isUser = async () => {
+    if (user) {
       window.location.href = "/";
     }
     return null;
@@ -40,14 +43,19 @@ const App = () => {
   const routes = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
-        <Route index element={<Home userAuth={userAuth} />} />
-        <Route path="/login" loader={isUserAuth} exact element={<LogIn />} />
-        <Route path="/signup" loader={isUserAuth} exact element={<SignUp />} />
+        <Route index element={<Home user={user} />} />
+        <Route
+          path="/login"
+          loader={isUser}
+          exact
+          element={<LogIn setUser={setUser} />}
+        />
+        <Route path="/signup" loader={isUser} exact element={<SignUp />} />
         <Route
           path="/profile/:username"
           exact
           loader={profileLoader}
-          element={<Profile userAuth={userAuth} />}
+          element={<Profile user={user} />}
         />
       </Route>
     )
