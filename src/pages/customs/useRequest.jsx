@@ -1,7 +1,7 @@
 import { useCookies } from "react-cookie";
 
 const useRequest = () => {
-  const [, setCookie, removeCookie] = useCookies(["session"]);
+  const [, setCookie, removeCookie] = useCookies(["session", "user"]);
 
   const getConfig = (method, body) => {
     const config = {
@@ -34,8 +34,9 @@ const useRequest = () => {
       const url = urlConstructor(endpoint);
       const response = await fetch(url, getConfig("GET", body));
       const data = await response.json();
-      return data;
-    } catch (e) {
+      if (response.status === 200) {
+        return data;
+      }
       if (e.response.status === 404) {
         window.location.href = "/404";
         return;
@@ -48,8 +49,11 @@ const useRequest = () => {
         throw e;
       }
       if (e.response.status === 400) {
+        console.log("Logging out");
         await logOutRequest();
       }
+      alert(e.response.data.message);
+    } catch (e) {
       alert(e.response.data.message);
     }
   };
@@ -58,10 +62,13 @@ const useRequest = () => {
     try {
       const url = urlConstructor(endpoint);
       const response = await fetch(url, getConfig("POST", body));
+      if (response.status === 400) {
+        await logOutRequest();
+      }
       const data = await response.json();
-      return data;
-    } catch (e) {
-      console.log(e);
+      if (response.status === 200) {
+        return data;
+      }
       if (e.response.status === 404) {
         window.location.href = "/404";
         return;
@@ -74,8 +81,12 @@ const useRequest = () => {
         throw e;
       }
       if (e.response.status === 400) {
+        console.log("Logging out");
         await logOutRequest();
       }
+      alert(e.response.data.message);
+    } catch (e) {
+      console.log(e);
       alert(e.response.data.message);
     }
   };
