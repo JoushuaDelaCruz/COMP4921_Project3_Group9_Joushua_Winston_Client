@@ -1,7 +1,7 @@
 import { useCookies } from "react-cookie";
 
 const useRequest = () => {
-  const [cookie, setCookie, removeCookie] = useCookies(["session"]);
+  const [, setCookie, removeCookie] = useCookies(["session"]);
 
   const getConfig = (method, body) => {
     const config = {
@@ -20,6 +20,7 @@ const useRequest = () => {
     const success = await postRequest("auth/logout");
     if (success) {
       removeCookie("session");
+      removeCookie("user");
       window.location.href = "/";
     }
   };
@@ -79,9 +80,14 @@ const useRequest = () => {
     }
   };
 
-  const setUpCookie = (session) => {
+  const setUpCookie = (session, user) => {
     const expireTime = 60 * 60 * 1000;
     setCookie("session", session, {
+      path: "/",
+      maxAge: expireTime,
+      sameSite: "strict",
+    });
+    setCookie("user", user, {
       path: "/",
       maxAge: expireTime,
       sameSite: "strict",
@@ -93,7 +99,7 @@ const useRequest = () => {
       const endpoint = "auth/login";
       const response = await postRequest(endpoint, credentials);
       if (response.success) {
-        setUpCookie(response.session);
+        setUpCookie(response.session, response.user);
         return response;
       }
       return response;
