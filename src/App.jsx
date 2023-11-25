@@ -3,17 +3,19 @@ import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import { useEffect, useState } from "react";
 import useRequest from "./pages/customs/useRequest";
-import Profile from "./pages/profile";
+import Profile from "./Pages/Profile";
 import {
   Route,
   createBrowserRouter,
   RouterProvider,
   createRoutesFromElements,
 } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const { getRequest, logOutRequest, logInRequest } = useRequest();
+  const { getRequest } = useRequest();
+  const [cookies, setCookie, removeCookie] = useCookies(["session", "user"]);
+  const [user, setUser] = useState(cookies.user);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -26,7 +28,7 @@ const App = () => {
     };
 
     checkSession();
-  }, [logOutRequest, logInRequest]);
+  }, [setCookie, removeCookie]);
 
   const isUser = async () => {
     if (user) {
