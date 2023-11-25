@@ -13,7 +13,7 @@ const NonAuthenticatedHomePage = () => {
       </h1>
       <section className="flex flex-col gap-4 md:flex-row md:gap-6">
         <div className="bg-transparent flex flex-col items-center gap-1">
-          <h2 className="font-logo text-center text-7xl text-celadon font-bold md:hidden">
+          <h2 className="font-logo text-center text-5xl text-celadon font-bold md:hidden">
             MakeItHappen
           </h2>
           <h1 className="font-roboto text-xl text-ash-grey text-center md:hidden">
