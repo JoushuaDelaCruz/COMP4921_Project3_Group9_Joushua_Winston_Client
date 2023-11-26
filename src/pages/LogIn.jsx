@@ -11,7 +11,6 @@ const LogIn = ({ setUser }) => {
 
   const validateEmail = async () => {
     if (email.length < 1 || !email.includes("@")) {
-      setErrMsg("Please enter valid credentials");
       return false;
     }
     setErrMsg("");
@@ -20,7 +19,6 @@ const LogIn = ({ setUser }) => {
 
   const validatePassword = async () => {
     if (password.length < 1) {
-      setErrMsg("Please enter valid credentials");
       return false;
     }
     setErrMsg("");
@@ -43,8 +41,10 @@ const LogIn = ({ setUser }) => {
     const isUsernameValidated = await validateEmail();
     const isPasswordValidated = await validatePassword();
     if (!isUsernameValidated || !isPasswordValidated) {
+      setErrMsg("Please enter valid credentials");
       return;
     }
+
     await makeLoginRequest();
   };
 
