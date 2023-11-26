@@ -37,22 +37,22 @@ const useRequest = () => {
       if (response.status === 200) {
         return data;
       }
-      if (e.response.status === 404) {
+      if (response.status === 404) {
         window.location.href = "/404";
         return;
       }
-      if (e.response.status === 401) {
+      if (response.status === 401) {
         window.location.href = "/login";
         return;
       }
-      if (e.response.status === 403) {
+      if (response.status === 403) {
         throw e;
       }
-      if (e.response.status === 400) {
+      if (response.status === 400) {
         console.log("Logging out");
         await logOutRequest();
       }
-      alert(e.response.data.message);
+      alert(response.message);
     } catch (e) {
       alert(e.response.data.message);
     }
@@ -69,22 +69,22 @@ const useRequest = () => {
       if (response.status === 200) {
         return data;
       }
-      if (e.response.status === 404) {
+      if (response.status === 404) {
         window.location.href = "/404";
         return;
       }
-      if (e.response.status === 401) {
+      if (response.status === 401) {
         window.location.href = "/login";
         return;
       }
-      if (e.response.status === 403) {
+      if (response.status === 403) {
         throw e;
       }
-      if (e.response.status === 400) {
+      if (response.status === 400) {
         console.log("Logging out");
         await logOutRequest();
       }
-      alert(e.response.data.message);
+      alert(response.message);
     } catch (e) {
       console.log(e);
       alert(e.response.data.message);
