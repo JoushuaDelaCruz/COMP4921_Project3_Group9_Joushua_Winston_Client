@@ -42,7 +42,8 @@ const App = () => {
       window.location.href = "/";
       return null;
     }
-    return null;
+    const response = await getRequest(`profile/friends`);
+    return response;
   };
 
   const routes = createBrowserRouter(
