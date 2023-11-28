@@ -15,7 +15,7 @@ const AddFriendCard = ({ user, removeRecommendedFriend, addFriend }) => {
   };
 
   const addUser = () => {
-    addFriend(user.user_id);
+    addFriend(user);
   };
 
   return (
@@ -25,7 +25,7 @@ const AddFriendCard = ({ user, removeRecommendedFriend, addFriend }) => {
           isExpanded ? "w-80 bg-slate-200" : "w-52 bg-transparent"
         }`}
         onClick={() => {
-          setIsExpanded(true);
+          setIsExpanded(!isExpanded);
         }}
         disabled={isExpanded}
       >
