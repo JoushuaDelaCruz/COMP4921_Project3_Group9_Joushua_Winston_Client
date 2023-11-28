@@ -52,8 +52,8 @@ const useRequest = () => {
         console.log("Logging out");
         await logOutRequest();
       }
-      alert(response.message);
     } catch (e) {
+      console.log(e);
       alert(e.response.data.message);
     }
   };
@@ -84,7 +84,6 @@ const useRequest = () => {
         console.log("Logging out");
         await logOutRequest();
       }
-      alert(response.message);
     } catch (e) {
       console.log(e);
       alert(e.response.data.message);
