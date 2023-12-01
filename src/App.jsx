@@ -11,6 +11,7 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import Notifications from "./pages/Notifications";
 
 const App = () => {
   const { getRequest } = useRequest();
@@ -46,6 +47,15 @@ const App = () => {
     return response;
   };
 
+  const notificationsLoader = async () => {
+    if (!user) {
+      window.location.href = "/";
+      return null;
+    }
+    const response = await getRequest(`notifications/friends`);
+    return response;
+  };
+
   const routes = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
@@ -67,6 +77,12 @@ const App = () => {
           loader={() => isUser()}
           exact
           element={<SignUp />}
+        />
+        <Route
+          loader={() => notificationsLoader()}
+          path="/notifications"
+          exact
+          element={<Notifications />}
         />
       </Route>
     )
