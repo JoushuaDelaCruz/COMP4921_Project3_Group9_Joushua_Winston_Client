@@ -13,7 +13,7 @@ const Notifications = () => {
 
   const removeFriendRequest = (id) => {
     const newFriendRequests = friendRequests.filter(
-      (friend) => friend.user_id !== id
+      (friend) => friend.friend_id !== id
     );
     setFriendRequests(newFriendRequests);
   };
@@ -57,7 +57,7 @@ const Notifications = () => {
           </button>
         </header>
         <div className="flex flex-col justify-center items-center w-full max-w-lg px-2 gap-3">
-          {friendRequests ? (
+          {friendRequests.length > 0 ? (
             friendRequests.map((friend) => {
               return (
                 <NotificationsFriendCard
