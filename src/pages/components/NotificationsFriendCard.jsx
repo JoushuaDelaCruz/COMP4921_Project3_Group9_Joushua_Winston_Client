@@ -32,10 +32,10 @@ const NotificationsFriendCard = ({
 
   return (
     <div
-      className={`bg-white w-full flex gap-2 p-2 rounded-md ring-1 ring-slate-400 shadow-md ${
+      className={`bg-white w-full flex gap-2 p-2 rounded-md ring-1 ring-slate-400 shadow-md transition-all duration-1000 ${
         isFriend
-          ? "opacity-0 blur-sm -translate-x-full transition-all duration-1000"
-          : "opacity-100 blur-none translate-y-0 transition-all duration-1000"
+          ? "opacity-0 blur-sm -translate-x-full"
+          : "opacity-100 blur-none translate-y-0"
       }`}
     >
       <AdvancedImage
