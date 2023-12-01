@@ -17,7 +17,7 @@ const useRequest = () => {
   };
 
   const logOutRequest = async () => {
-    const success = await postRequest("auth/logout");
+    const { success } = await postRequest("auth/logout");
     if (success) {
       removeCookie("session");
       removeCookie("user");
@@ -27,6 +27,33 @@ const useRequest = () => {
 
   const urlConstructor = (endpoint) => {
     return import.meta.env.VITE_SERVER_URL + endpoint;
+  };
+
+  const patchRequest = async (endpoint, body = undefined) => {
+    try {
+      const url = urlConstructor(endpoint);
+      const response = await fetch(url, getConfig("PATCH", body));
+      const data = await response.json();
+      if (response.status === 200) {
+        return data;
+      }
+      if (response.status === 404) {
+        window.location.href = "/404";
+        return;
+      }
+      if (response.status === 401) {
+        window.location.href = "/login";
+        return;
+      }
+      if (response.status === 403) {
+        throw e;
+      }
+      if (response.status === 400) {
+        await logOutRequest();
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const getRequest = async (endpoint, body = undefined) => {
@@ -54,7 +81,6 @@ const useRequest = () => {
       }
     } catch (e) {
       console.log(e);
-      alert(e.response.data.message);
     }
   };
 
@@ -81,12 +107,10 @@ const useRequest = () => {
         throw e;
       }
       if (response.status === 400) {
-        console.log("Logging out");
         await logOutRequest();
       }
     } catch (e) {
       console.log(e);
-      alert(e.response.data.message);
     }
   };
 
@@ -118,7 +142,13 @@ const useRequest = () => {
     }
   };
 
-  return { getRequest, postRequest, logInRequest, logOutRequest };
+  return {
+    getRequest,
+    postRequest,
+    logInRequest,
+    logOutRequest,
+    patchRequest,
+  };
 };
 
 export default useRequest;
