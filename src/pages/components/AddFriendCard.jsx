@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import { AdvancedImage } from "@cloudinary/react";
-import { Cloudinary } from "@cloudinary/url-gen";
 import useDateFormat from "../customs/useDateFormat";
 
-const AddFriendCard = ({ user, removeRecommendedFriend, addFriend }) => {
+const AddFriendCard = ({ user, removeRecommendedFriend, addFriend, image }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [relativeTime] = useDateFormat(user.date_created);
-  const cld = new Cloudinary({
-    cloud: { cloudName: import.meta.env.VITE_CLOUD_NAME },
-  });
 
   const removeFriend = () => {
     removeRecommendedFriend(user.user_id);
@@ -31,7 +27,7 @@ const AddFriendCard = ({ user, removeRecommendedFriend, addFriend }) => {
       >
         <div className="flex h-16 w-full min-w-fit items-center bg-white rounded-full gap-2 overflow-visible px-3 shadow-inner">
           <AdvancedImage
-            cldImg={cld.image(user.image)}
+            cldImg={image}
             className="w-12 h-12 rounded-full ring-1 ring-gray-400 overflow-hidden object-cover"
           />
           <div className="flex flex-col justify-center">
