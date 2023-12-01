@@ -29,6 +29,31 @@ const useRequest = () => {
     return import.meta.env.VITE_SERVER_URL + endpoint;
   };
 
+  const deleteRequest = async (endpoint, body = undefined) => {
+    try {
+      const url = urlConstructor(endpoint);
+      const response = await fetch(url, getConfig("DELETE", body));
+      if (response.status === 200) {
+        return true;
+      }
+      if (response.status === 404) {
+        return false;
+      }
+      if (response.status === 401) {
+        window.location.href = "/login";
+        return;
+      }
+      if (response.status === 403) {
+        throw e;
+      }
+      if (response.status === 400) {
+        await logOutRequest();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const patchRequest = async (endpoint, body = undefined) => {
     try {
       const url = urlConstructor(endpoint);
@@ -148,6 +173,7 @@ const useRequest = () => {
     logInRequest,
     logOutRequest,
     patchRequest,
+    deleteRequest,
   };
 };
 
