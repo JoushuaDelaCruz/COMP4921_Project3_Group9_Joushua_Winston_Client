@@ -50,8 +50,8 @@ const NonAuthenticatedHomePage = () => {
 
 const AuthenticatedHomePage = () => {
   return (
-    <main className="h-screen min-h-screen w-screen gap-5 relative flex flex-col sm:flex-row bg-mint-cream">
-      <nav className="w-full px-2 py-3 border-b shadow-md text-center bg-white sm:hidden">
+    <main className="h-screen min-h-screen w-screen gap-5 relative flex flex-col md:flex-row bg-mint-cream">
+      <nav className="w-full px-2 py-3 border-b shadow-md text-center bg-white md:hidden">
         <h1 className="text-3xl font-logo font-semibold text-celadon">
           MakeItHappen
         </h1>
