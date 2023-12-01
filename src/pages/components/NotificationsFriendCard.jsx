@@ -45,7 +45,7 @@ const NotificationsFriendCard = ({
       <section className="flex justify-between w-full">
         <div className="flex flex-col justify-between text-base">
           <h1 className="font-bold capitalize">{friend.username}</h1>
-          <h2 className="text-xs text-gray-600">Added you: {relativeTime}</h2>
+          <h2 className="text-xs text-gray-600">Requested {relativeTime}</h2>
         </div>
         <div className="flex justify-between items-center gap-2 text-sm mr-2 text-feldgrau">
           <button
