@@ -9,13 +9,21 @@ const NotificationsFriendCard = ({
   friend,
   removeFriendRequest,
 }) => {
-  const { patchRequest } = useRequest();
+  const { patchRequest, deleteRequest } = useRequest();
   const [relativeTime] = useDateFormat(friend.date_added);
 
   const acceptFriend = async () => {
-    console.log(friend);
     const { success } = await patchRequest(
-      `notifications/addFriend/${friend.friend_id}`
+      `notifications/friend/accept?friend=${friend.friend_id}`
+    );
+    if (success) {
+      removeFriendRequest(friend.friend_id);
+    }
+  };
+
+  const declineFriend = async () => {
+    const success = await deleteRequest(
+      `notifications/friend/decline?friend=${friend.friend_id}`
     );
     if (success) {
       removeFriendRequest(friend.friend_id);
@@ -41,13 +49,19 @@ const NotificationsFriendCard = ({
         </div>
         <div className="flex justify-between items-center gap-2 text-sm mr-2 text-feldgrau">
           <button
-            className="px-6 py-2 bg-celadon rounded-md"
+            className="px-6 py-2 bg-celadon/60 rounded-md hover:bg-celadon/80 active:bg-celadon/90 focus:outline-none focus:ring focus:ring-celadon transition-all duration-300"
             onClick={acceptFriend}
           >
             {" "}
             Confirm{" "}
           </button>
-          <button className="px-6 py-2 bg-ash-grey rounded-md"> Delete </button>
+          <button
+            className="px-6 py-2 rounded-md bg-ash-grey/60 hover:bg-ash-grey/80 active:bg-ash-grey/90 focus:outline-none focus:ring focus:ring-ash-grey transition-all duration-300"
+            onClick={declineFriend}
+          >
+            {" "}
+            Delete{" "}
+          </button>
         </div>
       </section>
     </div>
