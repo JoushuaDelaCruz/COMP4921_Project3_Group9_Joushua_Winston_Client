@@ -1,18 +1,14 @@
 import React from "react";
-import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import useDateFormat from "../customs/useDateFormat";
 
-const FriendCard = ({ friend }) => {
+const FriendCard = ({ friend, image }) => {
   const [relativeTime] = useDateFormat(friend.date_added);
-  const cld = new Cloudinary({
-    cloud: { cloudName: import.meta.env.VITE_CLOUD_NAME },
-  });
 
   return (
-    <div className="bg-white flex overflow-visible items-center border border-ash-grey rounded-full gap-2">
+    <div className="bg-white flex overflow-visible items-center border border-ash-grey rounded-full gap-2 shadow-md">
       <AdvancedImage
-        cldImg={cld.image(friend.image)}
+        cldImg={image}
         className="w-16 h-14 rounded-full ring-1 ring-gray-300 overflow-hidden object-cover"
       />
       <div className="flex justify-between w-full pr-6">
