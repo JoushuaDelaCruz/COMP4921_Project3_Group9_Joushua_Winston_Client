@@ -7,7 +7,7 @@ const NavbarButtons = ({ icon, isActive, order, description }) => {
     <Link
       to={`/${description === "calendar" ? "" : description}`}
       disabled={isActive}
-      className={`p-2 text-feldgrau rounded-full gap-5 sm:order-${order} sm:flex sm:items-center sm:rounded-md`}
+      className={`p-2 text-feldgrau rounded-full gap-5 md:order-${order} md:flex md:items-center md:rounded-md`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -17,7 +17,7 @@ const NavbarButtons = ({ icon, isActive, order, description }) => {
         } ${icon} fa-xl`}
       ></i>
       <h2
-        className={`hidden sm:block capitalize ${
+        className={`hidden md:block capitalize ${
           (isHovered || isActive) && "font-semibold"
         }`}
       >
