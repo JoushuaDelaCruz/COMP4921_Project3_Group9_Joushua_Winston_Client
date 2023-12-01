@@ -5,7 +5,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import AddFriendCard from "./components/AddFriendCard";
 import useRequest from "./customs/useRequest";
-import FriendCard from "./components/FriendCard";
+import FriendCard from "./components/ProfileFriendCard";
 
 const Profile = ({ user }) => {
   const [friends, setFriends] = useState(useLoaderData());
@@ -14,7 +14,7 @@ const Profile = ({ user }) => {
   const [addUserAnimation, setAddUserAnimation] = useState("");
   const [searchBarAnimation, setSearchBarAnimation] = useState("opacity-0");
   const [searchFriendName, setSearchFriendName] = useState("");
-  const { getRequest, postRequest } = useRequest();
+  const { getRequest, postRequest, logOutRequest } = useRequest();
   const cld = new Cloudinary({
     cloud: { cloudName: import.meta.env.VITE_CLOUD_NAME },
   });
@@ -87,22 +87,28 @@ const Profile = ({ user }) => {
   };
 
   return (
-    <main className="h-screen min-h-screen w-screen gap-5 relative flex flex-col sm:flex-row bg-mint-cream font-roboto">
-      <nav className="w-full px-2 py-3 border-b shadow-md text-center bg-white sm:hidden">
+    <main className="h-screen min-h-screen w-screen gap-5 relative flex flex-col md:flex-row bg-mint-cream font-roboto">
+      <nav className="w-full px-2 py-3 border-b shadow-md text-center bg-white md:hidden">
         <h1 className="text-3xl font-logo font-semibold text-celadon">
           MakeItHappen
         </h1>
       </nav>
       <NavBar currentPage={3} />
-      <section className="flex-1 flex flex-col gap-5 mx-2 sm:py-6 sm:flex-row sm:justify-center lg:gap-20 sm:mt-8">
-        <header className="flex flex-col gap-4 items-center sm:order-2 sm:mt-10">
+      <section className="flex-1 flex flex-col gap-5 mx-2 md:py-6 md:flex-row md:justify-center lg:gap-20 md:mt-8">
+        <header className="flex flex-col gap-4 items-center md:order-2 md:mt-10">
           <div className="flex items-center w-full gap-2">
             <AdvancedImage
               cldImg={cld.image(user.image)}
               className="w-14 h-12 rounded-full ring-1 ring-gray-300 overflow-hidden object-cover"
             />
-            <h1 className="border-b border-ash-grey w-full px-2 capitalize font-medium text-feldgrau">
+            <h1 className="border-b border-ash-grey w-full flex justify-between px-2 capitalize font-medium text-feldgrau">
               Hi, {user.username}!
+              <button
+                className="p-1 text-battleship-grey rounded-md hover:bg-slate-200 focus:bg-slate-300"
+                onClick={logOutRequest}
+              >
+                <i className="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
+              </button>
             </h1>
           </div>
           <div className="flex w-full items-center gap-2">
@@ -138,12 +144,13 @@ const Profile = ({ user }) => {
               />
             </div>
           </div>
-          <section className="flex flex-row gap-4 overflow-x-scroll py-2 w-full sm:flex-col sm:overflow-visible">
+          <section className="flex flex-row gap-4 overflow-x-scroll py-2 w-full md:flex-col md:overflow-visible">
             {recommendedFriends ? (
               recommendedFriends.map((friend) => {
                 return (
                   <AddFriendCard
                     key={`recommended-${friend.user_id}`}
+                    image={cld.image(friend.image)}
                     user={friend}
                     removeRecommendedFriend={removeRecommendedFriend}
                     addFriend={addFriend}
@@ -157,14 +164,20 @@ const Profile = ({ user }) => {
             )}
           </section>
         </header>
-        <section className="flex flex-col gap-2 sm:flex-1 sm:max-w-xl">
+        <section className="flex flex-col gap-2 md:flex-1 md:max-w-xl">
           <h1 className="font-semibold px-4 text-mint-cream bg-feldgrau rounded-lg py-1">
             Friends & Status
           </h1>
           <div className="flex flex-col py-3 gap-3">
             {friends ? (
               friends.map((friend, index) => {
-                return <FriendCard key={`friend-${index}`} friend={friend} />;
+                return (
+                  <FriendCard
+                    key={`friend-${index}`}
+                    friend={friend}
+                    image={cld.image(friend.image)}
+                  />
+                );
               })
             ) : (
               <h1 className="text-xs font-bold w-full text-center">
