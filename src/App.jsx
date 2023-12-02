@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-import Calendar from "./Components/CalendarComponent";
-
-const App = () => {
-  return (
-    <div>
-      <Calendar/>
-    </div>
-  );
-=======
 import Home from "./pages/Home";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
@@ -65,7 +54,6 @@ const App = () => {
   );
 
   return <RouterProvider router={routes} />;
->>>>>>> main
 };
 
 export default App;

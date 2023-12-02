@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
+import Calendar from "../Components/CalendarComponent";
 
 const Home = ({ userAuth }) => {
   return userAuth ? AuthenticatedHomePage() : NonAuthenticatedHomePage();
@@ -57,7 +58,9 @@ const AuthenticatedHomePage = () => {
         </h1>
       </nav>
       <NavBar />
-      <section className="flex-1">hi!</section>
+      <section className="flex-1">
+        <Calendar/>
+      </section>
     </main>
   );
 };

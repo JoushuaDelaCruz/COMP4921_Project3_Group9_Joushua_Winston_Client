@@ -1,160 +1,172 @@
-import React, { useEffect, useState } from "react";
-import Fullcalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import listPlugin from "@fullcalendar/list";
+import React, { useRef, useState, useEffect } from 'react';
+import {
+  ScheduleComponent, Day, Week, WorkWeek, Agenda, Month, Inject,
+  ViewsDirective, ViewDirective
+} from '@syncfusion/ej2-react-schedule';
+import { registerLicense } from '@syncfusion/ej2-base';
+import useRequest from "../pages/customs/useRequest";
+import { createElement } from '@syncfusion/ej2-base';
+import { DropDownList } from '@syncfusion/ej2-dropdowns';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Calendar() {
-    const [events, setEvents] = useState([
-      // { // this object will be "parsed" into an Event Object
-      //   title: 'The Title', // a property!
-      //   start: '2023-11-22', // a property!
-      //   end: '2023-11-23', // a property! ** see important note below about 'end' **
-      //   allDay: false
-      // }
-    ]);
+  registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIfEx0Q3xbf1xzZFRHallSTnJfUiweQnxTdEZiWH1YcXVQRWRdVEB0XA==')
+  const { getRequest, postRequest } = useRequest();
 
-    const [modalHidden, setModalHidden] = useState("hidden");
-    const [modalTitle, setModalTitle] = useState("");
-    const [modalStartDate, setModalStartDate] = useState(new Date().toISOString());
-    const [modalEndDate, setModalEndDate] = useState(new Date().toISOString());
-    const [allDay, setAllDay] = useState(false);
-    const [calendarApi, setCalendarApi] = useState(null);
-    useEffect(() => {
-    }, [events])
-    
-
-    const HandleEvents = (events) => {
-      setEvents(events);
-    }
-
-    const handleSubmitAddEvent = (e) => {
-      e.preventDefault();
-      let calendar = calendarApi;
-
-      calendar.addEvent({
-        title: modalTitle,
-        end: modalEndDate,
-        start: modalStartDate,
-        allDay: allDay
-      })
-      resetModal();
-    }
-
-    const handleAllDayCheck = () => {
-      setAllDay(!allDay);
-    }
-
-    const toggleModal = (selectInfo) => {
-      if(modalHidden) {
-        setCalendarApi(selectInfo.view.calendar);
-        setModalHidden("");
-
-        // Start modal with clicked date 
-        let startString = new Date(selectInfo.startStr).toISOString();
-        startString = startString.substring(0, startString.length - 1);
-        setModalStartDate(startString);
-        setModalEndDate(startString);
-
-      } else {
-        setModalHidden("hidden");
-      }
-    }
-
-    const resetModal = () => {
-      setModalTitle("");
-      setModalStartDate();
-      setModalEndDate();
-      toggleModal();
-    }
-
-    const AddEventModal = () => {
-        return (
-          <div className={` shadow-lg shadow-black max-w-lg border border-black rounded-lg bg-white px-10 py-4 absolute top-[40%] left-[50%] translate-x-[-50%] transalte-y-[-50%] z-10 ${modalHidden}`}>
-            <form onSubmit={handleSubmitAddEvent}>
-              <div>
-                Add Event
-              </div>
-              <div>
-                <label>Title</label>
-                <input type="text" name="title" className="border border-black rounded-lg m-2" value={modalTitle} onChange={(e) => {setModalTitle(e.target.value)}} required/>
-              </div>
-
-              <div>
-                <label>Start Date</label>
-                <input type="datetime-local" name="title" className="border border-black rounded-lg m-2" value={modalStartDate} onChange={(e) =>setModalStartDate(e.target.value)}/>
-              </div>
-
-              <div>
-                <label>End Date</label>
-                <input type="datetime-local" name="title" className="border border-black rounded-lg m-2" value={modalEndDate} onChange={(e) =>setModalEndDate(e.target.value)}/>
-              </div>
-              <div>
-                <label>All Day</label>
-                <input type="checkbox" checked={allDay} onChange={handleAllDayCheck}/>
-              </div>
-              <div>
-                <button type="submit" className="border border-black rounded-md px-2">Add</button>
-                <button type="button" onClick={resetModal} className="border border-black rounded-md px-2">Cancel</button>
-              </div>
-            </form>
-          </div>
+  const [events, setEvents] = useState([]);
+  let openedEvent = null;
+  const scheduleObj = useRef(null);
+  
+  useEffect(() => {
+    const getEvents = async () => {
+      const resEvents = await getRequest("calendar/userEvents");
+      const eventsLength = resEvents.events.length;
+      const responseFormatted = []
+      for (let i = 0; i < eventsLength; i++) {
+        responseFormatted.push(
+          {
+            Id: i,
+            Subject: resEvents.events[i].title,
+            StartTime: new Date(resEvents.events[i].start_datetime),
+            EndTime: new Date(resEvents.events[i].end_datetime),
+            IsAllDay: resEvents.events[i].is_all_day,
+            Location: resEvents.events[i].location,
+            Description: resEvents.events[i].description,
+            StartTimezone: resEvents.events[i].start_timezone,
+            EndTimezone: resEvents.events[i].end_timezone,
+            RecurrenceRule: resEvents.events[i].recurrence_rule,
+            Uuid: resEvents.events[i].uuid
+          }
         )
-    }
-
-    const renderEventContent = (eventInfo)  => {
-      console.log(eventInfo);
-      const startHour = (eventInfo.event.start.getHours() % 12 || 12).toString();
-      const startPrefix = eventInfo.event.start.getHours() < 12 ? "am" : "pm";
-      const startMinute = eventInfo.event.start.getMinutes() > 0 ? `:${(eventInfo.event.start.getMinutes()).toString().padStart(2, 0) + startPrefix}`  : startPrefix;
-      return (
-        <div>
-          <b>{startHour + startMinute}</b>
-          <i> - {eventInfo.event.title}</i>
-        </div>
-      )
-    }
-
-    const handleDeleteEvent = (eventInfo) => {
-      console.log(eventInfo);
-      const deleteConfirm = confirm("Are you sure you want to delete this event?");
-      if(deleteConfirm) {
-        eventInfo.event.remove();
       }
+      setEvents(responseFormatted);
     }
 
+    getEvents();
 
-    return(
-      <>
-        <div className={`fixed w-full h-full${modalHidden}`} onClick={toggleModal}></div>
-        <Fullcalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-          height={'90vh'}
-          initialView={"dayGridMonth"} // [dayGridXXX, timeGridXXX, listXXX]
-          headerToolbar={{
-              start:"today prev,next",
-              center: "title",
-              end: "dayGridMonth,timeGridWeek,timeGridDay,listDay",
-          }}
-          editable={true}
-          selectable={true}
-          select={toggleModal}
-          eventClick={handleDeleteEvent}
-          dayMaxEvents={true}
-          viewClassNames={""}
-          dayCellClassNames={date => ("")}
-          nowIndicatorClassNames={"bg-red-600"}
-          eventDrop={event => (console.log(event.event))}
-          initialEvents={events}
-          eventsSet={HandleEvents}
-          eventContent={renderEventContent}
-          displayEventEnd={true}
-          forceEventDuration={true}
-        />
-        <AddEventModal/>
+  }, [])
 
-      </>
-    )
+  const actionHandler = (args) => {
+    if(args.requestType == "eventCreated") {
+      addEvent(args.data[0]);
+    } else if(args.requestType == "eventChanged") {
+      updateEvent(args.data[0]);
+    } else if(args.requestType == "eventRemoved") {
+      deleteEvent(args.data[0]);
+    }
+  } 
 
+  const addEvent = async (data) => {
+    data.Uuid = uuidv4();
+
+    let startTime = structuredClone(data.StartTime);
+    startTime.setMinutes(startTime.getMinutes() - startTime.getTimezoneOffset())
+
+    let endTime = structuredClone(data.EndTime);
+    endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset())
+    const body = {
+      title: data.Subject,
+      description: data.Description,
+      location: data.Location,
+      start_datetime: startTime,
+      end_datetime: endTime,
+      is_all_day: data.IsAllDay,
+      start_timezone: data.StartTimezone,
+      end_timezone: data.EndTimezone,
+      recurrence_rule: data.RecurrenceRule,
+      uuid: data.Uuid
+    }
+    
+    const response = await postRequest("calendar/createEvent", body);
+    if (!response) {
+      alert("ERROR ADDING EVENT");
+    }
+
+    
+  }
+
+  const updateEvent = async (data) => {
+    let startTime = structuredClone(data.StartTime);
+    startTime.setMinutes(startTime.getMinutes() - startTime.getTimezoneOffset())
+
+    let endTime = structuredClone(data.EndTime);
+    endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset())
+    
+    const body = {
+      title: data.Subject,
+      description: data.Description,
+      location: data.Location,
+      start_datetime: startTime,
+      end_datetime: endTime,
+      is_all_day: data.IsAllDay,
+      start_timezone: data.StartTimezone,
+      end_timezone: data.EndTimezone,
+      recurrence_rule: data.RecurrenceRule,
+      uuid: openedEvent.Uuid
+    }
+    const response = await postRequest("calendar/updateEvent", body);
+    if (!response) {
+      alert("ERROR UPDATING EVENT");
+    }
+  }
+
+  const deleteEvent = async (data) => {
+    const body = {
+      uuid: data.Uuid
+    }
+    const response = await postRequest("calendar/deleteEvent", body);
+    if (!response) {
+      alert("ERROR DELETING EVENT");
+    }
+  }
+
+  const onPopupOpen = (args) => {
+    if (args.type === 'Editor') {
+        if (!args.element.querySelector('.custom-field-row')) {
+          // Add Friends Row
+            let row = createElement('div', { className: 'custom-field-row' });
+            let formElement = args.element.querySelector('.e-schedule-form');
+            formElement.firstChild.insertBefore(row, formElement.firstChild.lastChild);
+            let container = createElement('div', { className: 'custom-field-container' });
+            let inputEle = createElement('input', {
+                className: 'e-field', attrs: { name: 'AddFriend' }
+            });
+            container.appendChild(inputEle);
+            row.appendChild(container);
+            let drowDownList = new DropDownList({
+                dataSource: [
+                    { text: 'Public Event', value: 'public-event' },
+                    { text: 'Maintenance', value: 'maintenance' },
+                    { text: 'Commercial Event', value: 'commercial-event' },
+                    { text: 'Family Event', value: 'family-event' }
+                ],
+                fields: { text: 'text', value: 'value' },
+                value: args.data.AddFriend,
+                floatLabelType: 'Always', placeholder: 'Add Friends'
+            });
+            drowDownList.appendTo(inputEle);
+            inputEle.setAttribute('name', 'AddFriend');
+        }
+        openedEvent = args.data;
+    }
+}
+
+  const eventSettings = {dataSource: events};
+  return (
+    <ScheduleComponent ref={scheduleObj} width='100%' height='100%' currentView='Month'
+    selectedDate={new Date()}
+    eventSettings={eventSettings}
+    actionComplete={actionHandler}
+    popupOpen={onPopupOpen}
+    >
+        <ViewsDirective>
+          <ViewDirective option='Day' />
+          <ViewDirective option='Week' />
+          <ViewDirective option='WorkWeek' />
+          <ViewDirective option='Month' />
+          <ViewDirective option='Agenda' />
+        </ViewsDirective>
+      <Inject services={[Day, Week, WorkWeek, Agenda, Month]} />
+    </ScheduleComponent>
+  )
 }
