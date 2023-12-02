@@ -3,14 +3,15 @@ import {
   ScheduleComponent, Day, Week, WorkWeek, Agenda, Month, Inject,
   ViewsDirective, ViewDirective
 } from '@syncfusion/ej2-react-schedule';
-import { registerLicense } from '@syncfusion/ej2-base';
+import { registerLicense, createElement, enableRipple } from '@syncfusion/ej2-base';
 import useRequest from "../pages/customs/useRequest";
-import { createElement } from '@syncfusion/ej2-base';
-import { DropDownList } from '@syncfusion/ej2-dropdowns';
+import { MultiSelect } from '@syncfusion/ej2-dropdowns';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function Calendar() {
-  registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIfEx0Q3xbf1xzZFRHallSTnJfUiweQnxTdEZiWH1YcXVQRWRdVEB0XA==')
+  enableRipple(true);
+  registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIfEx0Q3xbf1xzZFRHallSTnJfUiweQnxTdEZiWH1YcXVQRWRdVEB0XA==');
+  const [friends, setFriends] = useState([]);
   const { getRequest, postRequest } = useRequest();
 
   const [events, setEvents] = useState([]);
@@ -42,7 +43,13 @@ export default function Calendar() {
       setEvents(responseFormatted);
     }
 
+    const getFriends = async () => {
+      const response = await getRequest(`profile/friends`);
+      setFriends(response);
+    }
+
     getEvents();
+    getFriends();
 
   }, [])
 
@@ -74,7 +81,8 @@ export default function Calendar() {
       start_timezone: data.StartTimezone,
       end_timezone: data.EndTimezone,
       recurrence_rule: data.RecurrenceRule,
-      uuid: data.Uuid
+      uuid: data.Uuid,
+      added_friends: data.AddedFriends
     }
     
     const response = await postRequest("calendar/createEvent", body);
@@ -91,7 +99,7 @@ export default function Calendar() {
 
     let endTime = structuredClone(data.EndTime);
     endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset())
-    
+    console.log(openedEvent);
     const body = {
       title: data.Subject,
       description: data.Description,
@@ -129,27 +137,30 @@ export default function Calendar() {
             formElement.firstChild.insertBefore(row, formElement.firstChild.lastChild);
             let container = createElement('div', { className: 'custom-field-container' });
             let inputEle = createElement('input', {
-                className: 'e-field', attrs: { name: 'AddFriend' }
+                className: 'e-field', attrs: { name: 'AddedFriends' }
             });
             container.appendChild(inputEle);
             row.appendChild(container);
-            let drowDownList = new DropDownList({
-                dataSource: [
-                    { text: 'Public Event', value: 'public-event' },
-                    { text: 'Maintenance', value: 'maintenance' },
-                    { text: 'Commercial Event', value: 'commercial-event' },
-                    { text: 'Family Event', value: 'family-event' }
-                ],
+            let drowDownList = new MultiSelect({
+                dataSource: DropDownFriends(),
                 fields: { text: 'text', value: 'value' },
-                value: args.data.AddFriend,
+                value: args.data.AddedFriends,
                 floatLabelType: 'Always', placeholder: 'Add Friends'
             });
             drowDownList.appendTo(inputEle);
-            inputEle.setAttribute('name', 'AddFriend');
+            inputEle.setAttribute('name', 'AddedFriends');
         }
         openedEvent = args.data;
     }
-}
+  }
+
+  const DropDownFriends = () => {
+    const friendList = []
+    friends.forEach((friend) => {
+      friendList.push(friend.username)
+    })
+    return friendList;
+  }
 
   const eventSettings = {dataSource: events};
   return (
