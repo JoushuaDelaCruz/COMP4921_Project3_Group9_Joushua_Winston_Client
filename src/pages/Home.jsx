@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Calendar from "../Components/CalendarComponent";
 
-const Home = ({ userAuth }) => {
-  return userAuth ? AuthenticatedHomePage() : NonAuthenticatedHomePage();
+const Home = ({ user }) => {
+  return user ? AuthenticatedHomePage() : NonAuthenticatedHomePage();
 };
 
 const NonAuthenticatedHomePage = () => {
@@ -14,7 +14,7 @@ const NonAuthenticatedHomePage = () => {
       </h1>
       <section className="flex flex-col gap-4 md:flex-row md:gap-6">
         <div className="bg-transparent flex flex-col items-center gap-1">
-          <h2 className="font-logo text-center text-7xl text-celadon font-bold md:hidden">
+          <h2 className="font-logo text-center text-5xl text-celadon font-bold md:hidden">
             MakeItHappen
           </h2>
           <h1 className="font-roboto text-xl text-ash-grey text-center md:hidden">
@@ -51,13 +51,13 @@ const NonAuthenticatedHomePage = () => {
 
 const AuthenticatedHomePage = () => {
   return (
-    <main className="h-screen min-h-screen w-screen gap-5 relative flex flex-col sm:flex-row bg-mint-cream">
-      <nav className="w-full px-2 py-3 border-b shadow-md text-center bg-white sm:hidden">
+    <main className="h-screen min-h-screen w-screen gap-5 relative flex flex-col md:flex-row bg-mint-cream">
+      <nav className="w-full px-2 py-3 border-b shadow-md text-center bg-white md:hidden">
         <h1 className="text-3xl font-logo font-semibold text-celadon">
           MakeItHappen
         </h1>
       </nav>
-      <NavBar />
+      <NavBar currentPage={2} />
       <section className="flex-1">
         <Calendar/>
       </section>

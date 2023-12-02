@@ -24,6 +24,8 @@ export default {
         wiggle: "wiggle 1s ease-in-out infinite",
         "bounce-once": "bounce 1s ease-in-out 1",
         "bounce-twice": "bounce 1s ease-in-out 2",
+        hide: "opacity-0 blur-sm -translate-x-full transition-all duration-1000",
+        show: "opacity-100 blur-none translate-y-0 transition-all duration-1000",
       },
     },
   },

@@ -1,7 +1,7 @@
 import { useCookies } from "react-cookie";
 
 const useRequest = () => {
-  const [cookie, setCookie, removeCookie] = useCookies(["session"]);
+  const [, setCookie, removeCookie] = useCookies(["session", "user"]);
 
   const getConfig = (method, body) => {
     const config = {
@@ -17,9 +17,10 @@ const useRequest = () => {
   };
 
   const logOutRequest = async () => {
-    const success = await postRequest("auth/logout");
+    const { success } = await postRequest("auth/logout");
     if (success) {
       removeCookie("session");
+      removeCookie("user");
       window.location.href = "/";
     }
   };
@@ -28,28 +29,83 @@ const useRequest = () => {
     return import.meta.env.VITE_SERVER_URL + endpoint;
   };
 
+  const deleteRequest = async (endpoint, body = undefined) => {
+    try {
+      const url = urlConstructor(endpoint);
+      const response = await fetch(url, getConfig("DELETE", body));
+      if (response.status === 200) {
+        return true;
+      }
+      if (response.status === 404) {
+        return false;
+      }
+      if (response.status === 401) {
+        window.location.href = "/login";
+        return;
+      }
+      if (response.status === 403) {
+        throw e;
+      }
+      if (response.status === 400) {
+        await logOutRequest();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const patchRequest = async (endpoint, body = undefined) => {
+    try {
+      const url = urlConstructor(endpoint);
+      const response = await fetch(url, getConfig("PATCH", body));
+      const data = await response.json();
+      if (response.status === 200) {
+        return data;
+      }
+      if (response.status === 404) {
+        window.location.href = "/404";
+        return;
+      }
+      if (response.status === 401) {
+        window.location.href = "/login";
+        return;
+      }
+      if (response.status === 403) {
+        throw e;
+      }
+      if (response.status === 400) {
+        await logOutRequest();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const getRequest = async (endpoint, body = undefined) => {
     try {
       const url = urlConstructor(endpoint);
       const response = await fetch(url, getConfig("GET", body));
       const data = await response.json();
-      return data;
-    } catch (e) {
-      if (e.response.status === 404) {
+      if (response.status === 200) {
+        return data;
+      }
+      if (response.status === 404) {
         window.location.href = "/404";
         return;
       }
-      if (e.response.status === 401) {
+      if (response.status === 401) {
         window.location.href = "/login";
         return;
       }
-      if (e.response.status === 403) {
+      if (response.status === 403) {
         throw e;
       }
-      if (e.response.status === 400) {
+      if (response.status === 400) {
+        console.log("Logging out");
         await logOutRequest();
       }
-      alert(e.response.data.message);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -57,31 +113,40 @@ const useRequest = () => {
     try {
       const url = urlConstructor(endpoint);
       const response = await fetch(url, getConfig("POST", body));
+      if (response.status === 400) {
+        await logOutRequest();
+      }
       const data = await response.json();
-      return data;
-    } catch (e) {
-      console.log(e);
-      if (e.response.status === 404) {
+      if (response.status === 200) {
+        return data;
+      }
+      if (response.status === 404) {
         window.location.href = "/404";
         return;
       }
-      if (e.response.status === 401) {
+      if (response.status === 401) {
         window.location.href = "/login";
         return;
       }
-      if (e.response.status === 403) {
+      if (response.status === 403) {
         throw e;
       }
-      if (e.response.status === 400) {
+      if (response.status === 400) {
         await logOutRequest();
       }
-      alert(e.response.data.message);
+    } catch (e) {
+      console.log(e);
     }
   };
 
-  const setUpCookie = (session) => {
+  const setUpCookie = (session, user) => {
     const expireTime = 60 * 60 * 1000;
     setCookie("session", session, {
+      path: "/",
+      maxAge: expireTime,
+      sameSite: "strict",
+    });
+    setCookie("user", user, {
       path: "/",
       maxAge: expireTime,
       sameSite: "strict",
@@ -93,16 +158,23 @@ const useRequest = () => {
       const endpoint = "auth/login";
       const response = await postRequest(endpoint, credentials);
       if (response.success) {
-        setUpCookie(response.session);
-        return null;
+        setUpCookie(response.session, response.user);
+        return response;
       }
-      return response.message;
+      return response;
     } catch (e) {
-      return e.response.data.message;
+      return e.response.message;
     }
   };
 
-  return { getRequest, postRequest, logInRequest, logOutRequest };
+  return {
+    getRequest,
+    postRequest,
+    logInRequest,
+    logOutRequest,
+    patchRequest,
+    deleteRequest,
+  };
 };
 
 export default useRequest;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import useRequest from "./customs/useRequest";
 
-const LogIn = () => {
+const LogIn = ({ setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
@@ -11,7 +11,6 @@ const LogIn = () => {
 
   const validateEmail = async () => {
     if (email.length < 1 || !email.includes("@")) {
-      setErrMsg("Please enter valid credentials");
       return false;
     }
     setErrMsg("");
@@ -20,7 +19,6 @@ const LogIn = () => {
 
   const validatePassword = async () => {
     if (password.length < 1) {
-      setErrMsg("Please enter valid credentials");
       return false;
     }
     setErrMsg("");
@@ -29,12 +27,13 @@ const LogIn = () => {
 
   const makeLoginRequest = async () => {
     const credentials = { email, password };
-    const responseMsg = await logInRequest(credentials);
-    if (!responseMsg) {
+    const response = await logInRequest(credentials);
+    if (response.user) {
+      setUser(response.user);
       goToHome();
       return;
     } else {
-      setErrMsg(responseMsg);
+      setErrMsg(response.message);
     }
   };
 
@@ -42,8 +41,10 @@ const LogIn = () => {
     const isUsernameValidated = await validateEmail();
     const isPasswordValidated = await validatePassword();
     if (!isUsernameValidated || !isPasswordValidated) {
+      setErrMsg("Please enter valid credentials");
       return;
     }
+
     await makeLoginRequest();
   };
 
