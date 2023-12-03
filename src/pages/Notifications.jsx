@@ -83,7 +83,7 @@ const Notifications = () => {
             )}
           </div>
           <div
-            className={`flex flex-col w-full items-center max-w-lg gap-3 h-full absolute`}
+            className={`flex flex-col w-full items-center max-w-lg gap-3 h-fit absolute`}
           >
             <NotificationsEventCard isEvents={!toggle} />
             <NotificationsEventCard isEvents={!toggle} />
