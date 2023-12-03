@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {
   ScheduleComponent, Day, Week, WorkWeek, Agenda, Month, Inject,
-  ViewsDirective, ViewDirective
+  ViewsDirective, ViewDirective, resetScrollbarWidth
 } from '@syncfusion/ej2-react-schedule';
 import { registerLicense, createElement, enableRipple } from '@syncfusion/ej2-base';
 import useRequest from "../pages/customs/useRequest";
@@ -24,6 +24,8 @@ export default function Calendar() {
       const eventsLength = resEvents.events.length;
       const responseFormatted = []
       for (let i = 0; i < eventsLength; i++) {
+        const friends = resEvents.events[i].friends;
+        const friendsArr = friends.split(',');
         responseFormatted.push(
           {
             Id: i,
@@ -36,7 +38,10 @@ export default function Calendar() {
             StartTimezone: resEvents.events[i].start_timezone,
             EndTimezone: resEvents.events[i].end_timezone,
             RecurrenceRule: resEvents.events[i].recurrence_rule,
-            Uuid: resEvents.events[i].uuid
+            Uuid: resEvents.events[i].uuid,
+            AddedFriends: friendsArr,
+            Username: resEvents.events[i].username,
+            IsOriginal: resEvents.events[i].is_original
           }
         )
       }
@@ -99,7 +104,9 @@ export default function Calendar() {
 
     let endTime = structuredClone(data.EndTime);
     endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset())
+    console.log(data);
     console.log(openedEvent);
+    console.log();
     const body = {
       title: data.Subject,
       description: data.Description,
@@ -110,7 +117,9 @@ export default function Calendar() {
       start_timezone: data.StartTimezone,
       end_timezone: data.EndTimezone,
       recurrence_rule: data.RecurrenceRule,
-      uuid: openedEvent.Uuid
+      uuid: openedEvent.Uuid,
+      original_friends: openedEvent.AddedFriends,
+      new_friends: data.AddedFriends
     }
     const response = await postRequest("calendar/updateEvent", body);
     if (!response) {
@@ -130,12 +139,15 @@ export default function Calendar() {
 
   const onPopupOpen = (args) => {
     if (args.type === 'Editor') {
+        openedEvent = args.data;
         if (!args.element.querySelector('.custom-field-row')) {
+          let row = createElement('div', { className: 'custom-field-row' });
+          let formElement = args.element.querySelector('.e-schedule-form');
+          formElement.firstChild.insertBefore(row, formElement.firstChild.lastChild);
+          let container = createElement('div', { className: 'custom-field-container' });
+
           // Add Friends Row
-            let row = createElement('div', { className: 'custom-field-row' });
-            let formElement = args.element.querySelector('.e-schedule-form');
-            formElement.firstChild.insertBefore(row, formElement.firstChild.lastChild);
-            let container = createElement('div', { className: 'custom-field-container' });
+          if(openedEvent.IsOriginal) {
             let inputEle = createElement('input', {
                 className: 'e-field', attrs: { name: 'AddedFriends' }
             });
@@ -149,8 +161,11 @@ export default function Calendar() {
             });
             drowDownList.appendTo(inputEle);
             inputEle.setAttribute('name', 'AddedFriends');
+          } else {
+            container.appendChild(document.createTextNode(`Event created by: ${openedEvent.Username}`));
+            row.append(container);
+          }
         }
-        openedEvent = args.data;
     }
   }
 
