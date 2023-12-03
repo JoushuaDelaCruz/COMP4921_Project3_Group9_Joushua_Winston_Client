@@ -58,8 +58,8 @@ const useRequest = () => {
     try {
       const url = urlConstructor(endpoint);
       const response = await fetch(url, getConfig("PATCH", body));
-      const data = await response.json();
       if (response.status === 200) {
+        const data = await response.json();
         return data;
       }
       if (response.status === 404) {
@@ -85,8 +85,8 @@ const useRequest = () => {
     try {
       const url = urlConstructor(endpoint);
       const response = await fetch(url, getConfig("GET", body));
-      const data = await response.json();
       if (response.status === 200) {
+        const data = await response.json();
         return data;
       }
       if (response.status === 404) {
@@ -113,11 +113,8 @@ const useRequest = () => {
     try {
       const url = urlConstructor(endpoint);
       const response = await fetch(url, getConfig("POST", body));
-      if (response.status === 400) {
-        await logOutRequest();
-      }
-      const data = await response.json();
       if (response.status === 200) {
+        const data = await response.json();
         return data;
       }
       if (response.status === 404) {
@@ -133,6 +130,7 @@ const useRequest = () => {
       }
       if (response.status === 400) {
         await logOutRequest();
+        return;
       }
     } catch (e) {
       console.log(e);
