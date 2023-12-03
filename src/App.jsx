@@ -9,6 +9,7 @@ import {
   createBrowserRouter,
   RouterProvider,
   createRoutesFromElements,
+  redirect,
 } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import Notifications from "./pages/Notifications";
@@ -23,6 +24,7 @@ const App = () => {
       const response = await getRequest("verify");
       if (!response.authenticated) {
         setUser(null);
+        redirect("/");
         return;
       }
       setUser(response.user);
