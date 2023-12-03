@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
-import Calendar from "../Components/CalendarComponent";
+import Calendar from "./components/CalendarComponent";
 
 const Home = ({ user }) => {
   return user ? AuthenticatedHomePage() : NonAuthenticatedHomePage();
@@ -59,7 +59,7 @@ const AuthenticatedHomePage = () => {
       </nav>
       <NavBar currentPage={2} />
       <section className="flex-1">
-        <Calendar/>
+        <Calendar />
       </section>
     </main>
   );
