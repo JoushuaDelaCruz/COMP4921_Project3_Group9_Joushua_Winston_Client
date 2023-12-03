@@ -28,11 +28,11 @@ const NotificationsEventCard = ({ isEvents }) => {
           </div>
         </div>
         <div className="flex gap-2 text-sm">
-          <button className="px-6 py-2 w-full bg-celadon/60 rounded-md hover:bg-celadon/80 active:bg-celadon/90 focus:outline-none focus:ring focus:ring-celadon transition-all duration-300">
+          <button className="px-6 py-2 w-full bg-celadon/60 cursor-pointer rounded-md hover:bg-celadon/80 active:bg-celadon/90 focus:outline-none focus:ring focus:ring-celadon transition-all duration-300">
             {" "}
             Confirm{" "}
           </button>
-          <button className="px-6 py-2 w-full rounded-md bg-ash-grey/60 hover:bg-ash-grey/80 active:bg-ash-grey/90 focus:outline-none focus:ring focus:ring-ash-grey transition-all duration-300">
+          <button className="px-6 py-2 w-full rounded-md cursor-pointer bg-ash-grey/60 hover:bg-ash-grey/80 active:bg-ash-grey/90 focus:outline-none focus:ring focus:ring-ash-grey transition-all duration-300">
             {" "}
             Delete{" "}
           </button>
