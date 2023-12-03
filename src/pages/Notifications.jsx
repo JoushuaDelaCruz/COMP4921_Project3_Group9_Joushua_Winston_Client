@@ -25,7 +25,7 @@ const Notifications = () => {
     cloud: { cloudName: import.meta.env.VITE_CLOUD_NAME },
   });
   return (
-    <main className="h-screen min-h-screen w-screen gap-5 relative flex flex-col md:items-start items-center md:flex-row bg-mint-cream overflow-hidden  relative font-roboto">
+    <main className="h-screen min-h-screen w-screen gap-5 relative flex flex-col md:items-start items-center md:flex-row bg-mint-cream overflow-hidden font-roboto">
       <nav className="w-full px-2 py-3 border-b shadow-md text-center bg-white md:hidden">
         <h1 className="text-3xl font-logo font-semibold text-celadon">
           MakeItHappen
