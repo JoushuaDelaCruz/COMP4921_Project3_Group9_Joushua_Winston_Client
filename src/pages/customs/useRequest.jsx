@@ -101,7 +101,6 @@ const useRequest = () => {
         throw e;
       }
       if (response.status === 400) {
-        console.log("Logging out");
         await logOutRequest();
       }
     } catch (e) {
