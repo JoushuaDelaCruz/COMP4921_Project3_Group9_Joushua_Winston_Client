@@ -9,7 +9,6 @@ import {
   Inject,
   ViewsDirective,
   ViewDirective,
-  resetScrollbarWidth,
 } from "@syncfusion/ej2-react-schedule";
 import {
   registerLicense,
@@ -22,9 +21,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default function Calendar() {
   enableRipple(true);
-  registerLicense(
-    "Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIfEx0Q3xbf1xzZFRHallSTnJfUiweQnxTdEZiWH1YcXVQRWRdVEB0XA=="
-  );
+  registerLicense(import.meta.env.VITE_EJ2_SYNCFUSION_LICENSE_KEY);
   const [friends, setFriends] = useState([]);
   const { getRequest, postRequest } = useRequest();
 
@@ -117,9 +114,6 @@ export default function Calendar() {
 
     let endTime = structuredClone(data.EndTime);
     endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset());
-    console.log(data);
-    console.log(openedEvent);
-    console.log();
     const body = {
       title: data.Subject,
       description: data.Description,
@@ -165,7 +159,7 @@ export default function Calendar() {
         });
 
         // Add Friends Row
-        if (openedEvent.IsOriginal) {
+        if (!openedEvent.IsOriginal) {
           let inputEle = createElement("input", {
             className: "e-field",
             attrs: { name: "AddedFriends" },
@@ -210,6 +204,7 @@ export default function Calendar() {
       eventSettings={eventSettings}
       actionComplete={actionHandler}
       popupOpen={onPopupOpen}
+      className="bg-mint-cream"
     >
       <ViewsDirective>
         <ViewDirective option="Day" />
