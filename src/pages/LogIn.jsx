@@ -29,7 +29,7 @@ const LogIn = ({ setUser }) => {
     const { user } = await logInRequest(credentials);
     if (user) {
       setUser(user);
-      goToHome();
+      // goToHome();
       return;
     } else {
       setErrMsg(response.message);
