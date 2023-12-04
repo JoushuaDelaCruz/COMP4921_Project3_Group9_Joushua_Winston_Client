@@ -3,7 +3,7 @@ import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import { useEffect, useState } from "react";
 import useRequest from "./pages/customs/useRequest";
-import Profile from "./Pages/Profile";
+import Profile from "./pages/Profile";
 import {
   Route,
   createBrowserRouter,
