@@ -24,7 +24,6 @@ const App = () => {
       const response = await getRequest("verify");
       if (!response.authenticated) {
         setUser(null);
-        redirect("/");
         return;
       }
       setUser(response.user);
@@ -35,7 +34,7 @@ const App = () => {
 
   const isUser = async () => {
     if (user) {
-      window.location.href = "/";
+      redirect("/");
     }
     return null;
   };
