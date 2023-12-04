@@ -1,7 +1,7 @@
 import { useCookies } from "react-cookie";
 
 const useRequest = () => {
-  const [, setCookie, removeCookie] = useCookies(["session", "user"]);
+  const [, , removeCookie] = useCookies(["user"]);
 
   const getConfig = (method, body) => {
     const config = {
@@ -136,26 +136,11 @@ const useRequest = () => {
     }
   };
 
-  const setUpCookie = (session, user) => {
-    const expireTime = 60 * 60 * 1000;
-    setCookie("session", session, {
-      path: "/",
-      maxAge: expireTime,
-      sameSite: "strict",
-    });
-    setCookie("user", user, {
-      path: "/",
-      maxAge: expireTime,
-      sameSite: "strict",
-    });
-  };
-
   const logInRequest = async (credentials) => {
     try {
       const endpoint = "auth/login";
       const response = await postRequest(endpoint, credentials);
       if (response.success) {
-        setUpCookie(response.session, response.user);
         return response;
       }
       return response;
