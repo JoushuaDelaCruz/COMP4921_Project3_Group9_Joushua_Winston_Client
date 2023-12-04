@@ -1,14 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import NotificationsFriendCard from "./components/NotificationsFriendCard";
 import { useLoaderData } from "react-router-dom";
 import { Cloudinary } from "@cloudinary/url-gen";
 import NotificationsEventCard from "./components/NotificationsEventCard";
+import useRequest from "./customs/useRequest";
 
 const Notifications = () => {
   const [friendRequests, setFriendRequests] = useState(useLoaderData());
-
+  const [eventInvites, setEventInvites] = useState([]);
   const [toggle, setToggle] = useState(false);
+  const { getRequest } = useRequest();
+
+  useEffect(() => {
+    const getEventInvites = async () => {
+      const results = await getRequest("notifications/invites");
+      setEventInvites(results);
+    };
+    getEventInvites();
+  }, []);
 
   const toggleNotifications = () => {
     setToggle(!toggle);
@@ -85,8 +95,20 @@ const Notifications = () => {
           <div
             className={`flex flex-col w-full items-center max-w-lg gap-3 h-fit absolute`}
           >
-            <NotificationsEventCard isEvents={!toggle} />
-            <NotificationsEventCard isEvents={!toggle} />
+            {eventInvites.length > 0 ? (
+              eventInvites.map((event) => {
+                return (
+                  <NotificationsEventCard
+                    image={cld.image(event.image)}
+                    event={event}
+                    key={`event-${event.event_user_id}`}
+                    isEvents={!toggle}
+                  />
+                );
+              })
+            ) : (
+              <h1 className="text-ash-grey"> You have no event invites yet</h1>
+            )}
           </div>
         </div>
       </section>
