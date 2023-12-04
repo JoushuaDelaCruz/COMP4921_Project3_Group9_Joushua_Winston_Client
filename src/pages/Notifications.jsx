@@ -20,6 +20,13 @@ const Notifications = () => {
     getEventInvites();
   }, []);
 
+  const removeEventInvite = (id) => {
+    const newEventInvites = eventInvites.filter(
+      (event) => event.event_user_id !== id
+    );
+    setEventInvites(newEventInvites);
+  };
+
   const toggleNotifications = () => {
     setToggle(!toggle);
   };
@@ -86,7 +93,13 @@ const Notifications = () => {
                 );
               })
             ) : (
-              <h1 className="text-ash-grey">
+              <h1
+                className={`text-ash-grey transition-all duration-1000 ${
+                  !toggle
+                    ? "opacity-0 blur-sm translate-x-full"
+                    : "opacity-100 blur-none translate-y-0"
+                }`}
+              >
                 {" "}
                 You have no friends requests yet
               </h1>
@@ -103,11 +116,21 @@ const Notifications = () => {
                     event={event}
                     key={`event-${event.event_user_id}`}
                     isEvents={!toggle}
+                    removeEventInvite={removeEventInvite}
                   />
                 );
               })
             ) : (
-              <h1 className="text-ash-grey"> You have no event invites yet</h1>
+              <h1
+                className={`text-ash-grey transition-all duration-1000 ${
+                  !toggle
+                    ? "opacity-0 blur-sm translate-x-full"
+                    : "opacity-100 blur-none translate-y-0"
+                }`}
+              >
+                {" "}
+                You have no event invites yet
+              </h1>
             )}
           </div>
         </div>
