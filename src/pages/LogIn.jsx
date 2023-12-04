@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useRequest from "./customs/useRequest";
 
 const LogIn = ({ setUser }) => {
@@ -7,7 +7,6 @@ const LogIn = ({ setUser }) => {
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const { logInRequest } = useRequest();
-  const navigation = useNavigate();
 
   const validateEmail = async () => {
     if (email.length < 1 || !email.includes("@")) {
@@ -27,9 +26,9 @@ const LogIn = ({ setUser }) => {
 
   const makeLoginRequest = async () => {
     const credentials = { email, password };
-    const response = await logInRequest(credentials);
-    if (response.user) {
-      setUser(response.user);
+    const { user } = await logInRequest(credentials);
+    if (user) {
+      setUser(user);
       goToHome();
       return;
     } else {
@@ -49,7 +48,7 @@ const LogIn = ({ setUser }) => {
   };
 
   const goToHome = () => {
-    navigation("/");
+    window.location.href = "/";
   };
 
   return (
