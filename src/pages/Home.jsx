@@ -58,7 +58,7 @@ const AuthenticatedHomePage = () => {
         </h1>
       </nav>
       <NavBar currentPage={2} />
-      <section className="flex-1">
+      <section className="flex-1 p-2">
         <Calendar />
       </section>
     </main>
