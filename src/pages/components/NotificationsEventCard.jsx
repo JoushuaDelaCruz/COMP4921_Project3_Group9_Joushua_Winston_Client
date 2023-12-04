@@ -1,6 +1,14 @@
 import React from "react";
+import useEventCountDown from "../customs/useEventCountDown";
+import useEventDuration from "../customs/useDurationFormat";
+import useDateFormat from "../customs/useDateFormat";
+import { AdvancedImage } from "@cloudinary/react";
 
-const NotificationsEventCard = ({ isEvents }) => {
+const NotificationsEventCard = ({ isEvents, event, image }) => {
+  const [timeUntil] = useEventCountDown(event.start_datetime);
+  const [duration] = useEventDuration(event.start_datetime, event.end_datetime);
+  const [requestedDate] = useDateFormat(event.created_datetime);
+
   return (
     <div
       className={`bg-white w-full flex gap-2 p-2 rounded-md ring-1 ring-slate-400 shadow-md transition-all duration-1000 ${
@@ -11,20 +19,22 @@ const NotificationsEventCard = ({ isEvents }) => {
     >
       <section className="flex flex-col justify-between w-full gap-2">
         <div className="flex flex-row gap-2">
-          <img
-            src="/assets/cutie-patoty.jpg"
+          <AdvancedImage
+            cldImg={image}
             className="w-14 h-12 rounded-lg ring-1 ring-gray-500 overflow-hidden object-cover"
           />
           <div className="flex flex-row justify-between w-full align-middle text-base h-12">
-            <h1 className="font-bold capitalize">Winston</h1>
-            <h2 className="text-xs text-gray-600">Requested 2hr ago</h2>
+            <h1 className="font-bold capitalize">{event.inviter}</h1>
+            <h2 className="text-xs text-gray-600">
+              Requested: {requestedDate}
+            </h2>
           </div>
         </div>
         <div className="flex items-center gap-3 text-sm mr-2 text-feldgrau">
           <div className="flex flex-col gap-1 w-fit">
-            <h1 className="font-bold">Event: Drinking in 2hrs</h1>
-            <h2>Created: 2 hrs ago </h2>
-            <h2>Start: 2 days from now </h2>
+            <h1 className="font-bold capitalize">Event: {event.event_title}</h1>
+            <h2 className="capitalize">{timeUntil} </h2>
+            <h2>Duration: {duration} </h2>
           </div>
         </div>
         <div className="flex gap-2 text-sm">
