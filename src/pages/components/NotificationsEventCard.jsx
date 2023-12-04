@@ -3,11 +3,40 @@ import useEventCountDown from "../customs/useEventCountDown";
 import useEventDuration from "../customs/useDurationFormat";
 import useDateFormat from "../customs/useDateFormat";
 import { AdvancedImage } from "@cloudinary/react";
+import useRequest from "../customs/useRequest";
 
-const NotificationsEventCard = ({ isEvents, event, image }) => {
+const NotificationsEventCard = ({
+  isEvents,
+  event,
+  image,
+  removeEventInvite,
+}) => {
   const [timeUntil] = useEventCountDown(event.start_datetime);
   const [duration] = useEventDuration(event.start_datetime, event.end_datetime);
   const [requestedDate] = useDateFormat(event.created_datetime);
+  const { patchRequest, deleteRequest } = useRequest();
+
+  const rejectInvite = async () => {
+    const success = await deleteRequest(
+      `notifications/event/reject?event=${event.event_user_id}`
+    );
+    if (success) {
+      removeEventInvite(event.event_user_id);
+      return;
+    }
+    alert("Did not delete invite");
+  };
+
+  const acceptInvite = async () => {
+    const success = await patchRequest(
+      `notifications/event/accept?event=${event.event_user_id}`
+    );
+    if (success) {
+      removeEventInvite(event.event_user_id);
+      return;
+    }
+    alert("Did not accept invite");
+  };
 
   return (
     <div
@@ -38,13 +67,19 @@ const NotificationsEventCard = ({ isEvents, event, image }) => {
           </div>
         </div>
         <div className="flex gap-2 text-sm">
-          <button className="px-6 py-2 w-full bg-celadon/60 cursor-pointer rounded-md hover:bg-celadon/80 active:bg-celadon/90 focus:outline-none focus:ring focus:ring-celadon transition-all duration-300">
+          <button
+            className="px-6 py-2 w-full bg-celadon/60 cursor-pointer rounded-md hover:bg-celadon/80 active:bg-celadon/90 focus:outline-none focus:ring focus:ring-celadon transition-all duration-300"
+            onClick={acceptInvite}
+          >
             {" "}
-            Confirm{" "}
+            Accept{" "}
           </button>
-          <button className="px-6 py-2 w-full rounded-md cursor-pointer bg-ash-grey/60 hover:bg-ash-grey/80 active:bg-ash-grey/90 focus:outline-none focus:ring focus:ring-ash-grey transition-all duration-300">
+          <button
+            className="px-6 py-2 w-full rounded-md cursor-pointer bg-ash-grey/60 hover:bg-ash-grey/80 active:bg-ash-grey/90 focus:outline-none focus:ring focus:ring-ash-grey transition-all duration-300"
+            onClick={rejectInvite}
+          >
             {" "}
-            Delete{" "}
+            Reject{" "}
           </button>
         </div>
       </section>
