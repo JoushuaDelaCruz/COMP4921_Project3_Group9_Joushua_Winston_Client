@@ -13,6 +13,7 @@ import {
 } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import Notifications from "./pages/Notifications";
+import EventBin from "./pages/EventBin";
 
 const App = () => {
   const { getRequest } = useRequest();
@@ -85,6 +86,8 @@ const App = () => {
           exact
           element={<Notifications />}
         />
+        <Route path="/bin" exact element={<EventBin />} />
+        <Route path="*" element={<h1>404</h1>} />
       </Route>
     )
   );
