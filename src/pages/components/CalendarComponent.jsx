@@ -35,8 +35,11 @@ export default function Calendar() {
       const eventsLength = resEvents.events.length;
       const responseFormatted = [];
       for (let i = 0; i < eventsLength; i++) {
-        const friends = resEvents.events[i].friends;
-        const friendsArr = friends.split(",");
+        let friendsArr;
+        if (resEvents.events[i].friends) {
+          const friends = resEvents.events[i].friends;
+          friendsArr = friends.split(",");
+        }
         responseFormatted.push({
           Id: i,
           Subject: resEvents.events[i].title,
@@ -70,7 +73,11 @@ export default function Calendar() {
     if (args.requestType == "eventCreated") {
       addEvent(args.data[0]);
     } else if (args.requestType == "eventChanged") {
-      updateEvent(args.data[0]);
+      if(openedEvent.IsOriginal) {
+        updateEvent(args.data[0]);
+      } else {
+        alert(`This event was created by user ${openedEvent.Username}, please ask them to update this event`);
+      }
     } else if (args.requestType == "eventRemoved") {
       deleteEvent(args.data[0]);
     }
@@ -159,28 +166,32 @@ export default function Calendar() {
         });
 
         // Add Friends Row
-        if (!openedEvent.IsOriginal) {
-          let inputEle = createElement("input", {
-            className: "e-field",
-            attrs: { name: "AddedFriends" },
-          });
-          container.appendChild(inputEle);
-          row.appendChild(container);
-          let drowDownList = new MultiSelect({
-            dataSource: DropDownFriends(),
-            fields: { text: "text", value: "value" },
-            value: args.data.AddedFriends,
-            floatLabelType: "Always",
-            placeholder: "Add Friends",
-          });
-          drowDownList.appendTo(inputEle);
-          inputEle.setAttribute("name", "AddedFriends");
-        } else {
-          container.appendChild(
-            document.createTextNode(`Event created by: ${openedEvent.Username}`)
-          );
-          row.append(container);
-        }
+        let inputEle = createElement("input", {
+          className: "e-field",
+          attrs: { name: "AddedFriends" },
+        });
+        container.appendChild(inputEle);
+        row.appendChild(container);
+        let drowDownList = new MultiSelect({
+          dataSource: DropDownFriends(),
+          fields: { text: "text", value: "value" },
+          value: args.data.AddedFriends,
+          floatLabelType: "Always",
+          placeholder: "Add Friends",
+        });
+        drowDownList.appendTo(inputEle);
+        inputEle.setAttribute("name", "AddedFriends");
+        row.append(container);
+
+        let createRow = createElement("div", { className: "py-2" });
+        formElement.firstChild.insertBefore(
+          createRow,
+          formElement.firstChild.lastChild
+        );
+        createRow.appendChild(
+          document.createTextNode(`Event created by: ${openedEvent.Username}`)
+        );
+
       }
     }
   };
