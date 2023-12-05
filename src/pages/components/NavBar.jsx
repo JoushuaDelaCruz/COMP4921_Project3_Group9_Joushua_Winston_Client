@@ -4,22 +4,32 @@ import NavbarButtons from "./NavbarButtons";
 const NavBar = ({ currentPage }) => {
   const pages = [
     {
-      id: 2,
+      id: 1,
       icon: "fa-calendar",
       order: 1,
       description: "calendar",
+      link: "/",
     },
     {
-      id: 1,
+      id: 2,
       icon: "fa-bell",
       order: 2,
       description: "notifications",
+      link: "/notifications",
     },
     {
       id: 3,
       icon: "fa-user",
       order: 3,
       description: "profile",
+      link: "/profile",
+    },
+    {
+      id: 4,
+      icon: "fa-trash-can",
+      order: 5,
+      description: "event bin",
+      link: "/bin",
     },
   ];
 
@@ -38,6 +48,7 @@ const NavBar = ({ currentPage }) => {
             order={page.order}
             isActive={currentPage === page.id}
             description={page.description}
+            link={page.link}
           />
         ))}
       </div>
