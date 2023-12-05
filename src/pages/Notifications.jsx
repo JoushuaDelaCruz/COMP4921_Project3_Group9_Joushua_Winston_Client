@@ -48,7 +48,7 @@ const Notifications = () => {
           MakeItHappen
         </h1>
       </nav>
-      <NavBar currentPage={1} />
+      <NavBar currentPage={2} />
       <section className="flex flex-col justify-center items-center w-full px-2 gap-10 md:py-10 h-full">
         <header className="flex w-fit p-2 gap-1 justify-center rounded-lg bg-feldgrau text-xs shadow-md shadow-slate-800">
           <button
