@@ -6,7 +6,7 @@ const NavBar = ({ currentPage }) => {
     {
       id: 1,
       icon: "fa-calendar",
-      order: 1,
+      order: 3,
       description: "calendar",
       link: "/",
     },
@@ -20,14 +20,14 @@ const NavBar = ({ currentPage }) => {
     {
       id: 3,
       icon: "fa-user",
-      order: 3,
+      order: 1,
       description: "profile",
       link: "/profile",
     },
     {
       id: 4,
       icon: "fa-trash-can",
-      order: 5,
+      order: 4,
       description: "event bin",
       link: "/bin",
     },
@@ -43,7 +43,7 @@ const NavBar = ({ currentPage }) => {
       <div className="flex justify-between w-full md:justify-start md:flex-col gap-5">
         {pages.map((page) => (
           <NavbarButtons
-            key={page.id}
+            key={`nav-${page.id}`}
             icon={page.icon}
             order={page.order}
             isActive={currentPage === page.id}
