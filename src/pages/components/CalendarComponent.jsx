@@ -182,21 +182,30 @@ export default function Calendar() {
         drowDownList.appendTo(inputEle);
         inputEle.setAttribute("name", "AddedFriends");
         row.append(container);
+      }
 
-        if (openedEvent.Uuid){
-          let createRow = createElement("div", { className: "py-2" });
-          formElement.firstChild.insertBefore(
-            createRow,
-            formElement.firstChild.lastChild
-          );
-          createRow.appendChild(
-            document.createTextNode(`Event created by: ${openedEvent.Username}`)
-          );
-        }
-
+      if (openedEvent.Uuid){
+        let formElement = args.element.querySelector(".e-schedule-form");
+        let createRow = createElement("div", { className: "py-2 create-row" });
+        formElement.firstChild.insertBefore(
+          createRow,
+          formElement.firstChild.lastChild
+        );
+        createRow.appendChild(
+          document.createTextNode(`Event created by: ${openedEvent.Username}`)
+        );
       }
     }
   };
+
+  const onPopupClose = (args) => {
+    if (args.type === "Editor") {
+      if (openedEvent.Uuid){
+        let createRow = args.element.querySelector(".create-row");
+        createRow.remove();
+      }
+    }
+  }
 
   const DropDownFriends = () => {
     const friendList = [];
@@ -217,6 +226,7 @@ export default function Calendar() {
       eventSettings={eventSettings}
       actionComplete={actionHandler}
       popupOpen={onPopupOpen}
+      popupClose={onPopupClose}
       className="bg-mint-cream"
     >
       <ViewsDirective>
