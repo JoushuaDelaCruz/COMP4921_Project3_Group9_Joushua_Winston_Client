@@ -7,15 +7,23 @@ import AddFriendCard from "./components/AddFriendCard";
 import useRequest from "./customs/useRequest";
 import FriendCard from "./components/ProfileFriendCard";
 import CreateGroupModal from "./components/CreateGroupModal";
+import { GroupCard } from "./components/GroupCard";
 
 const Profile = ({ user }) => {
   const [friends, setFriends] = useState(useLoaderData());
   const [recommendedFriends, setRecommendedFriends] = useState([]);
   const [isAddUserTitleHidden, setIsAddUserTitleHidden] = useState(false);
   const [addUserAnimation, setAddUserAnimation] = useState("");
-  const [searchBarAnimation, setSearchBarAnimation] = useState("opacity-0");
+  const [searchBarAnimation, setSearchBarAnimation] = useState("opacity-0 w-0");
   const [searchFriendName, setSearchFriendName] = useState("");
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
+  const [groups, setGroups] = useState([]);
+
+  const addGroup = (group) => {
+    const newGroups = [...groups, group];
+    setGroups(newGroups);
+  };
+
   const { getRequest, postRequest, logOutRequest } = useRequest();
   const cld = new Cloudinary({
     cloud: { cloudName: import.meta.env.VITE_CLOUD_NAME },
@@ -33,7 +41,12 @@ const Profile = ({ user }) => {
       const response = await getRequest("profile/randomUsers");
       setRecommendedFriends(response);
     };
+    const getGroups = async () => {
+      const response = await getRequest("profile/groups");
+      setGroups(response);
+    };
     getRandomFriends();
+    getGroups();
   }, []);
 
   const searchFriendEnterListener = (e) => {
@@ -58,7 +71,7 @@ const Profile = ({ user }) => {
     setTimeout(() => {
       setAddUserAnimation("hidden");
       setSearchBarAnimation(
-        "opacity-100 blur-none translate-y-0 transition-all duration-1000"
+        "opacity-100 blur-none translate-y-0 transition-all duration-1000 w-full"
       );
     }, 1000);
   };
@@ -101,7 +114,7 @@ const Profile = ({ user }) => {
       </nav>
       <NavBar currentPage={3} />
       <section className="flex-1 flex flex-col gap-5 mx-2 md:py-6 md:flex-row md:justify-center lg:gap-20 md:mt-8">
-        <header className="flex flex-col gap-4 items-center md:order-2 md:mt-10">
+        <header className="flex flex-col w-full gap-4 items-center md:order-2 md:mt-10 max-w-xs">
           <div className="flex items-center w-full gap-2">
             <AdvancedImage
               cldImg={cld.image(user.image)}
@@ -117,16 +130,16 @@ const Profile = ({ user }) => {
               </button>
             </h1>
           </div>
-          <div className="flex w-full items-center gap-2">
+          <div className="flex w-full items-center gap-2 justify-between">
             <h1
-              className={`whitespace-nowrap text-xs py-2 font-bold text-battleship-grey ${
+              className={`whitespace-nowrap font-semibold text-gray-600 text-base ${
                 isAddUserTitleHidden && addUserAnimation
               }`}
             >
               Add Friends
             </h1>
             <div
-              className={`flex min-w-fit border border-gray-300 flex-1 ${
+              className={`flex min-w-fit border border-gray-300 flex-1 justify-end ${
                 isAddUserTitleHidden
                   ? "border-opacity-100 blur-none translate-y-0 transition-all duration-1000"
                   : "border-opacity-0"
@@ -145,7 +158,7 @@ const Profile = ({ user }) => {
                 onKeyDown={searchFriendEnterListener}
                 onChange={(e) => setSearchFriendName(e.target.value)}
                 value={searchFriendName}
-                className={`w-full py-1 px-2 rounded-md ${searchBarAnimation} focus:outline-none focus:ring-1 focus:ring-battleship-grey`}
+                className={`py-1 px-2 rounded-md ${searchBarAnimation} focus:outline-none focus:ring-1 focus:ring-battleship-grey`}
                 placeholder="Search Friends"
               />
             </div>
@@ -170,22 +183,8 @@ const Profile = ({ user }) => {
             )}
           </section>
           <div className="flex w-full items-center gap-2">
-            <div className="flex w-full gap-2 text-sm justify-between">
-              <div className="flex rounded-md border-gray-300 flex-1 border-opacity-100 blur-none translate-y-0 transition-all duration-1000 border ">
-                <button
-                  className={`p-2 shadow-inner rounded-md bg-white flex justify-center`}
-                >
-                  <i className="fa-solid fa-magnifying-glass"></i>
-                </button>
-                <input
-                  type="text"
-                  onKeyDown={searchFriendEnterListener}
-                  onChange={(e) => setSearchFriendName(e.target.value)}
-                  value={searchFriendName}
-                  className={`w-full py-1 px-2 rounded-md opacity-100 blur-none translate-y-0 transition-all duration-1000 focus:outline-none focus:ring-1 focus:ring-battleship-grey`}
-                  placeholder="Search Groups"
-                />
-              </div>
+            <div className="flex w-full gap-2 text-sm justify-between items-center">
+              <h1 className="font-semibold text-gray-600 text-lg">Groups</h1>
               <button
                 onClick={() => setShowCreateGroupModal(true)}
                 className={`p-2 shadow-inner rounded-md bg-white flex justify-center border border-gray-300 hover:bg-slate-200 focus:bg-slate-300 active:bg-slate-400 transition-all duration-300`}
@@ -194,7 +193,15 @@ const Profile = ({ user }) => {
               </button>
             </div>
           </div>
-          <section className="flex flex-row gap-4 overflow-x-scroll py-2 w-full md:flex-col md:overflow-visible"></section>
+          <section className="flex flex-row gap-4 overflow-x-scroll py-2 w-full md:flex-col md:overflow-visible">
+            {groups ? (
+              groups.map((group, index) => {
+                return <GroupCard key={`group-${index}`} group={group} />;
+              })
+            ) : (
+              <h1> No Groups Found </h1>
+            )}
+          </section>
         </header>
         <section className="flex flex-col gap-2 md:flex-1 md:max-w-xl">
           <h1 className="font-semibold px-4 text-mint-cream bg-feldgrau rounded-lg py-1">
@@ -208,6 +215,7 @@ const Profile = ({ user }) => {
                     key={`friend-${index}`}
                     friend={friend}
                     image={cld.image(friend.image)}
+                    index={index}
                   />
                 );
               })
@@ -220,7 +228,7 @@ const Profile = ({ user }) => {
         </section>
       </section>
       {showCreateGroupModal && (
-        <CreateGroupModal close={closeCreateGroupModal} />
+        <CreateGroupModal close={closeCreateGroupModal} addGroup={addGroup} />
       )}
     </main>
   );
