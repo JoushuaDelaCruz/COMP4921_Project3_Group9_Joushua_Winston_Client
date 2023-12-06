@@ -183,14 +183,16 @@ export default function Calendar() {
         inputEle.setAttribute("name", "AddedFriends");
         row.append(container);
 
-        let createRow = createElement("div", { className: "py-2" });
-        formElement.firstChild.insertBefore(
-          createRow,
-          formElement.firstChild.lastChild
-        );
-        createRow.appendChild(
-          document.createTextNode(`Event created by: ${openedEvent.Username}`)
-        );
+        if (openedEvent.Uuid){
+          let createRow = createElement("div", { className: "py-2" });
+          formElement.firstChild.insertBefore(
+            createRow,
+            formElement.firstChild.lastChild
+          );
+          createRow.appendChild(
+            document.createTextNode(`Event created by: ${openedEvent.Username}`)
+          );
+        }
 
       }
     }
