@@ -18,26 +18,26 @@ const useEventCountDown = (futureTimestamp) => {
       );
 
       if (minutesUntil < 1) {
-        setTimeUntil("just now");
+        setTimeUntil("Just now");
       } else if (minutesUntil === 1) {
-        setTimeUntil("in 1 min");
+        setTimeUntil("In 1 min");
       } else if (hoursUntil < 1) {
         setTimeUntil(rtf.format(minutesUntil, "minute"));
       } else if (hoursUntil === 1) {
-        setTimeUntil(`starts in 1 hour`);
+        setTimeUntil(`Starts in 1 hour`);
       } else if (
         daysUntil === 1 &&
         currentDate.getDate() !== futureDate.getDate()
       ) {
-        setTimeUntil("starts tomorrow");
+        setTimeUntil("Starts tomorrow");
       } else if (daysUntil < 1) {
-        setTimeUntil(`starts ${rtf.format(hoursUntil, "hour")}`);
+        setTimeUntil(`Starts ${rtf.format(hoursUntil, "hour")}`);
       } else if (daysUntil === 1) {
-        setTimeUntil("starts in 1 day");
+        setTimeUntil("Starts in 1 day");
       } else if (monthsUntil < 1) {
-        setTimeUntil(`starts ${rtf.format(daysUntil, "day")}`);
+        setTimeUntil(`Starts ${rtf.format(daysUntil, "day")}`);
       } else if (monthsUntil === 1) {
-        setTimeUntil("starts in 1 month");
+        setTimeUntil("Starts in 1 month");
       } else {
         setTimeUntil(futureDate.toDateString());
       }

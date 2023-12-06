@@ -14,6 +14,9 @@ import {
   registerLicense,
   createElement,
   enableRipple,
+  removeClass,
+  addClass,
+  classList
 } from "@syncfusion/ej2-base";
 import useRequest from "../customs/useRequest";
 import { MultiSelect } from "@syncfusion/ej2-dropdowns";
@@ -55,6 +58,7 @@ export default function Calendar() {
           AddedFriends: friendsArr,
           Username: resEvents.events[i].username,
           IsOriginal: resEvents.events[i].is_original,
+          OriginalStartTime: new Date(resEvents.events[i].start_datetime)
         });
       }
       setEvents(responseFormatted);
@@ -79,7 +83,7 @@ export default function Calendar() {
         alert(`This event was created by user ${openedEvent.Username}, please ask them to update this event`);
       }
     } else if (args.requestType == "eventRemoved") {
-      deleteEvent(args.data[0]);
+      deleteEvent(args.deletedRecords[0] );
     }
   };
 
@@ -132,8 +136,8 @@ export default function Calendar() {
       end_timezone: data.EndTimezone,
       recurrence_rule: data.RecurrenceRule,
       uuid: openedEvent.Uuid,
-      original_friends: openedEvent.AddedFriends,
-      new_friends: data.AddedFriends,
+      original_friends: openedEvent.AddedFriends || [],
+      new_friends: data.AddedFriends || [],
     };
     const response = await postRequest("calendar/updateEvent", body);
     if (!response) {
@@ -182,8 +186,11 @@ export default function Calendar() {
         drowDownList.appendTo(inputEle);
         inputEle.setAttribute("name", "AddedFriends");
         row.append(container);
+      }
 
-        let createRow = createElement("div", { className: "py-2" });
+      if (openedEvent.Uuid){
+        let formElement = args.element.querySelector(".e-schedule-form");
+        let createRow = createElement("div", { className: "py-2 create-row" });
         formElement.firstChild.insertBefore(
           createRow,
           formElement.firstChild.lastChild
@@ -191,10 +198,32 @@ export default function Calendar() {
         createRow.appendChild(
           document.createTextNode(`Event created by: ${openedEvent.Username}`)
         );
-
       }
+    } else if (args.type === "RecurrenceAlert") {
+      if(args.element.querySelector(".e-dlg-content") && args.element.querySelector(".e-quick-dialog-occurrence-event")) {
+        console.log(args);
+        const messageDiv = args.element.querySelector(".e-dlg-content");
+        messageDiv.innerHTML = "Would you like to edit the entire series?";
+        const eventButton = args.element.querySelector(".e-quick-dialog-occurrence-event");
+        classList(eventButton, ["hidden"], []);
+        
+        const editButton = args.element.querySelector(".e-quick-dialog-series-event");
+        editButton.innerHTML = "Confirm";
+      }
+    } else if (args.type === "DeleteAlert") {
+      const eventButton = args.element.querySelector(".e-quick-dialog-delete");
+      classList(eventButton, [], ["hidden"]);
     }
   };
+
+  const onPopupClose = (args) => {
+    if (args.type === "Editor") {
+      if (openedEvent.Uuid){
+        let createRow = args.element.querySelector(".create-row");
+        createRow.remove();
+      }
+    }
+  }
 
   const DropDownFriends = () => {
     const friendList = [];
@@ -215,6 +244,7 @@ export default function Calendar() {
       eventSettings={eventSettings}
       actionComplete={actionHandler}
       popupOpen={onPopupOpen}
+      popupClose={onPopupClose}
       className="bg-mint-cream"
     >
       <ViewsDirective>
