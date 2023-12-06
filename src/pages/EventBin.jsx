@@ -8,21 +8,18 @@ const EventBin = () => {
   const { getRequest } = useRequest();
 
   const removeEvent = (uuid) => {
-    const newEventBin = eventBin.filter(
-      (event) => event.uuid !== uuid
-    );
+    const newEventBin = eventBin.filter((event) => event.uuid !== uuid);
     setEventBin(newEventBin);
-    console.log(newEventBin);
   };
 
   useEffect(() => {
     const getRecycleBin = async () => {
       const resEvents = await getRequest("recycle/getEvents");
       setEventBin(resEvents.events);
-    }
+    };
 
     getRecycleBin();
-  }, [])
+  }, []);
   return (
     <main className="h-screen min-h-screen w-screen gap-5 relative flex flex-col md:flex-row bg-mint-cream font-roboto">
       <nav className="w-full px-2 py-3 border-b shadow-md text-center bg-white md:hidden">
@@ -36,9 +33,20 @@ const EventBin = () => {
           Deleted Events
         </h1>
         <div className="flex flex-col w-full items-center max-w-lg gap-3 h-fit">
-          {eventBin.map((event, index) => {
-            return <EventBinCard key={`bin-${index}`} index={index} event={event} removeEvent={removeEvent}/>;
-          })}
+          {eventBin.length > 0 ? (
+            eventBin.map((event, index) => {
+              return (
+                <EventBinCard
+                  key={`bin-${index}`}
+                  index={index}
+                  event={event}
+                  removeEvent={removeEvent}
+                />
+              );
+            })
+          ) : (
+            <h1 className="text-gray-400 font-bold"> No Events Deleted </h1>
+          )}
         </div>
       </section>
     </main>
