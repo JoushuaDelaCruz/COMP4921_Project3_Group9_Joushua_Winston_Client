@@ -55,6 +55,7 @@ export default function Calendar() {
           AddedFriends: friendsArr,
           Username: resEvents.events[i].username,
           IsOriginal: resEvents.events[i].is_original,
+          OriginalStartTime: new Date(resEvents.events[i].start_datetime)
         });
       }
       setEvents(responseFormatted);
@@ -132,8 +133,8 @@ export default function Calendar() {
       end_timezone: data.EndTimezone,
       recurrence_rule: data.RecurrenceRule,
       uuid: openedEvent.Uuid,
-      original_friends: openedEvent.AddedFriends,
-      new_friends: data.AddedFriends,
+      original_friends: openedEvent.AddedFriends || [],
+      new_friends: data.AddedFriends || [],
     };
     const response = await postRequest("calendar/updateEvent", body);
     if (!response) {
@@ -152,6 +153,7 @@ export default function Calendar() {
   };
 
   const onPopupOpen = (args) => {
+    console.log(args);
     if (args.type === "Editor") {
       openedEvent = args.data;
       if (!args.element.querySelector(".custom-field-row")) {
@@ -194,6 +196,16 @@ export default function Calendar() {
         createRow.appendChild(
           document.createTextNode(`Event created by: ${openedEvent.Username}`)
         );
+      }
+    } else if (args.type === "RecurrenceAlert") {
+      if(args.element.querySelector(".e-dlg-content") && args.element.querySelector(".e-quick-dialog-occurrence-event")) {
+        const messageDiv = args.element.querySelector(".e-dlg-content");
+        messageDiv.innerHTML = "Would you like to edit the entire series?";
+        const eventButton = args.element.querySelector(".e-quick-dialog-occurrence-event");
+        eventButton.className += " hidden"
+
+        const editButton = args.element.querySelector(".e-quick-dialog-series-event");
+        editButton.innerHTML = "Confirm";
       }
     }
   };
