@@ -4,7 +4,7 @@ import useEventCountDown from "../customs/useEventCountDown";
 import useEventDuration from "../customs/useDurationFormat";
 import useRequest from "../customs/useRequest";
 
-const EventBinCard = ({ index, event }) => {
+const EventBinCard = ({ index, event, removeEvent }) => {
   const { postRequest, deleteRequest } = useRequest();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -18,13 +18,17 @@ const EventBinCard = ({ index, event }) => {
   const handleRestore = async () => {
     const result = await postRequest("recycle/restoreEvent", {uuid: event.uuid});
     if (!result) alert("Couldn't restore event. Please try again later.")
-    setIsLoading(true);
+    handleRemoveEvent();
   }
 
   const handleDelete = async () => {
     const result = await deleteRequest("recycle/deleteEvent", {uuid: event.uuid});
     if (!result) alert("Couldn't delete event. Please try again later.")
-    setIsLoading(true);
+    handleRemoveEvent();
+  }
+
+  const handleRemoveEvent = () => {
+    removeEvent(event.uuid);
   }
 
   return (

@@ -7,6 +7,14 @@ const EventBin = () => {
   const [eventBin, setEventBin] = useState([]);
   const { getRequest } = useRequest();
 
+  const removeEvent = (uuid) => {
+    const newEventBin = eventBin.filter(
+      (event) => event.uuid !== uuid
+    );
+    setEventBin(newEventBin);
+    console.log(newEventBin);
+  };
+
   useEffect(() => {
     const getRecycleBin = async () => {
       const resEvents = await getRequest("recycle/getEvents");
@@ -29,7 +37,7 @@ const EventBin = () => {
         </h1>
         <div className="flex flex-col w-full items-center max-w-lg gap-3 h-fit">
           {eventBin.map((event, index) => {
-            return <EventBinCard key={`bin-${index}`} index={index} event={event} />;
+            return <EventBinCard key={`bin-${index}`} index={index} event={event} removeEvent={removeEvent}/>;
           })}
         </div>
       </section>

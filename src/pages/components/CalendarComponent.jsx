@@ -14,6 +14,9 @@ import {
   registerLicense,
   createElement,
   enableRipple,
+  removeClass,
+  addClass,
+  classList
 } from "@syncfusion/ej2-base";
 import useRequest from "../customs/useRequest";
 import { MultiSelect } from "@syncfusion/ej2-dropdowns";
@@ -80,7 +83,7 @@ export default function Calendar() {
         alert(`This event was created by user ${openedEvent.Username}, please ask them to update this event`);
       }
     } else if (args.requestType == "eventRemoved") {
-      deleteEvent(args.data[0]);
+      deleteEvent(args.deletedRecords[0] );
     }
   };
 
@@ -153,7 +156,6 @@ export default function Calendar() {
   };
 
   const onPopupOpen = (args) => {
-    console.log(args);
     if (args.type === "Editor") {
       openedEvent = args.data;
       if (!args.element.querySelector(".custom-field-row")) {
@@ -199,14 +201,18 @@ export default function Calendar() {
       }
     } else if (args.type === "RecurrenceAlert") {
       if(args.element.querySelector(".e-dlg-content") && args.element.querySelector(".e-quick-dialog-occurrence-event")) {
+        console.log(args);
         const messageDiv = args.element.querySelector(".e-dlg-content");
         messageDiv.innerHTML = "Would you like to edit the entire series?";
         const eventButton = args.element.querySelector(".e-quick-dialog-occurrence-event");
-        eventButton.className += " hidden"
-
+        classList(eventButton, ["hidden"], []);
+        
         const editButton = args.element.querySelector(".e-quick-dialog-series-event");
         editButton.innerHTML = "Confirm";
       }
+    } else if (args.type === "DeleteAlert") {
+      const eventButton = args.element.querySelector(".e-quick-dialog-delete");
+      classList(eventButton, [], ["hidden"]);
     }
   };
 
