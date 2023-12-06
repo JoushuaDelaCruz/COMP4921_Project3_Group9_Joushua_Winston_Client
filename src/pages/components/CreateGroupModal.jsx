@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AsyncSelect from "react-select/async";
 import useRequest from "../customs/useRequest";
 
-const CreateGroupModal = ({ close }) => {
+const CreateGroupModal = ({ close, addGroup }) => {
   const [name, setName] = useState("");
   const [selectedMembers, setSelectedMembers] = useState([]);
   const { getRequest, postRequest } = useRequest();
@@ -20,6 +20,12 @@ const CreateGroupModal = ({ close }) => {
     const data = { group_name: name, members: selectedMembers };
     const result = await postRequest("profile/createGroup", data);
     if (result) {
+      const group = {
+        group_name: name,
+        num_members: selectedMembers.length,
+        created_datetime: new Date(),
+      };
+      addGroup(group);
       close();
     }
   };
