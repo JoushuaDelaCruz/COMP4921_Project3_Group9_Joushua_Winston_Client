@@ -1,10 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AdvancedImage } from "@cloudinary/react";
 import useDateFormat from "../customs/useDateFormat";
 
 const AddFriendCard = ({ user, removeRecommendedFriend, addFriend, image }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [relativeTime] = useDateFormat(user.date_created);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 250);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const removeFriend = () => {
     removeRecommendedFriend(user.user_id);
@@ -15,7 +24,13 @@ const AddFriendCard = ({ user, removeRecommendedFriend, addFriend, image }) => {
   };
 
   return (
-    <div className="min-w-fit opacity-100 blur-none translate-y-0 transition-all duration-1000">
+    <div
+      className={`min-w-fit blur-none transition-all duration-1000 ${
+        isLoading
+          ? "opacity-0 blur-sm translate-x-full"
+          : "opacity-100 blur-none translate-y-0"
+      }`}
+    >
       <div
         className={`flex flex-row items-center rounded-full shadow-md transition-all duration-500 ${
           isExpanded ? "w-80 bg-slate-200" : "w-52 bg-transparent"

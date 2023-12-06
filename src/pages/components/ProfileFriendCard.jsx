@@ -1,12 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { AdvancedImage } from "@cloudinary/react";
 import useDateFormat from "../customs/useDateFormat";
 
-const FriendCard = ({ friend, image }) => {
+const FriendCard = ({ friend, image, index }) => {
   const [relativeTime] = useDateFormat(friend.date_added);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 250 * index);
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
-    <div className="bg-white flex overflow-visible items-center border border-ash-grey rounded-full gap-2 shadow-md">
+    <div
+      className={`bg-white flex overflow-visible items-center border border-ash-grey rounded-full gap-2 shadow-md transition-all duration-1000
+    ${
+      isLoading
+        ? "opacity-0 blur-sm -translate-x-full"
+        : "opacity-100 blur-none translate-y-0"
+    }
+    `}
+    >
       <AdvancedImage
         cldImg={image}
         className="w-16 h-14 rounded-full ring-1 ring-gray-300 overflow-hidden object-cover"
