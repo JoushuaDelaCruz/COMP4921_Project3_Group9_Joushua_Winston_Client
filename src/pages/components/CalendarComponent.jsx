@@ -96,21 +96,19 @@ export default function Calendar() {
 
   const addEvent = async (data) => {
     data.Uuid = uuidv4();
-    console.log(data);
+    // let startTime = structuredClone(data.StartTime);
+    // startTime.setMinutes(
+    //   startTime.getMinutes() - startTime.getTimezoneOffset()
+    // );
 
-    let startTime = structuredClone(data.StartTime);
-    startTime.setMinutes(
-      startTime.getMinutes() - startTime.getTimezoneOffset()
-    );
-
-    let endTime = structuredClone(data.EndTime);
-    endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset());
+    // let endTime = structuredClone(data.EndTime);
+    // endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset());
     const body = {
       title: data.Subject,
       description: data.Description,
       location: data.Location,
-      start_datetime: startTime,
-      end_datetime: endTime,
+      start_datetime: data.StartTime,
+      end_datetime: data.EndTime,
       is_all_day: data.IsAllDay,
       start_timezone: data.StartTimezone,
       end_timezone: data.EndTimezone,
