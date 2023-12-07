@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from "uuid";
 export default function Calendar() {
   enableRipple(true);
   registerLicense(import.meta.env.VITE_EJ2_SYNCFUSION_LICENSE_KEY);
+  const [loading, setLoading] = useState(false);
   const [friends, setFriends] = useState([]);
   const [groups, setGroups] = useState([]);
   const { getRequest, postRequest } = useRequest();
@@ -31,39 +32,40 @@ export default function Calendar() {
   let openedEvent = null;
   const scheduleObj = useRef(null);
 
-  useEffect(() => {
-    const getEvents = async () => {
-      const resEvents = await getRequest("calendar/userEvents");
-      const eventsLength = resEvents.events.length;
-      const responseFormatted = [];
-      for (let i = 0; i < eventsLength; i++) {
-        let friendsArr;
-        if (resEvents.events[i].friends) {
-          const friends = resEvents.events[i].friends;
-          friendsArr = friends.split(",");
-        }
-        const eventObj = {
-          Id: i,
-          Subject: resEvents.events[i].title,
-          StartTime: new Date(resEvents.events[i].start_datetime),
-          EndTime: new Date(resEvents.events[i].end_datetime),
-          IsAllDay: resEvents.events[i].is_all_day,
-          Location: resEvents.events[i].location,
-          Description: resEvents.events[i].description,
-          StartTimezone: resEvents.events[i].start_timezone,
-          EndTimezone: resEvents.events[i].end_timezone,
-          RecurrenceRule: resEvents.events[i].recurrence_rule,
-          Uuid: resEvents.events[i].uuid,
-          AddedFriends: friendsArr,
-          AddedGroups: resEvents.events[i].group_id,
-          Username: resEvents.events[i].username,
-          IsOriginal: resEvents.events[i].is_original,
-          OriginalStartTime: new Date(resEvents.events[i].start_datetime)
-        }
-        responseFormatted.push(eventObj);
+  const getEvents = async () => {
+    const resEvents = await getRequest("calendar/userEvents");
+    const eventsLength = resEvents.events.length;
+    const responseFormatted = [];
+    for (let i = 0; i < eventsLength; i++) {
+      let friendsArr;
+      if (resEvents.events[i].friends) {
+        const friends = resEvents.events[i].friends;
+        friendsArr = friends.split(",");
       }
-      setEvents(responseFormatted);
-    };
+      const eventObj = {
+        Id: i,
+        Subject: resEvents.events[i].title,
+        StartTime: new Date(resEvents.events[i].start_datetime),
+        EndTime: new Date(resEvents.events[i].end_datetime),
+        IsAllDay: resEvents.events[i].is_all_day,
+        Location: resEvents.events[i].location,
+        Description: resEvents.events[i].description,
+        StartTimezone: resEvents.events[i].start_timezone,
+        EndTimezone: resEvents.events[i].end_timezone,
+        RecurrenceRule: resEvents.events[i].recurrence_rule,
+        Uuid: resEvents.events[i].uuid,
+        AddedFriends: friendsArr,
+        AddedGroups: resEvents.events[i].group_id,
+        Username: resEvents.events[i].username,
+        IsOriginal: resEvents.events[i].is_original,
+        OriginalStartTime: new Date(resEvents.events[i].start_datetime)
+      }
+      responseFormatted.push(eventObj);
+    }
+    setEvents(responseFormatted);
+  };
+
+  useEffect(() => {
 
     const getFriends = async () => {
       const response = await getRequest(`profile/friends`);
@@ -95,6 +97,7 @@ export default function Calendar() {
   };
 
   const addEvent = async (data) => {
+    console.log("ADDEVENT");
     data.Uuid = uuidv4();
     const body = {
       title: data.Subject,
@@ -115,8 +118,8 @@ export default function Calendar() {
     if (!response) {
       alert("ERROR ADDING EVENT");
     }
-
     // scheduleObj.current.addEvent([body]);
+    getEvents();
   };
 
   const updateEvent = async (data) => {
@@ -141,6 +144,8 @@ export default function Calendar() {
   };
 
   const deleteEvent = async (data) => {
+    console.log("DELETE EVENT");
+    console.log(data);
     const body = {
       uuid: data.Uuid,
     };
