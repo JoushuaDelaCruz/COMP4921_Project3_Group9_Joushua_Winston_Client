@@ -116,24 +116,16 @@ export default function Calendar() {
       alert("ERROR ADDING EVENT");
     }
 
-    scheduleObj.current.addEvent([body]);
-    buttonObj.current.element.setAttribute('disabled', 'true');
+    // scheduleObj.current.addEvent([body]);
   };
 
   const updateEvent = async (data) => {
-    let startTime = structuredClone(data.StartTime);
-    startTime.setMinutes(
-      startTime.getMinutes() - startTime.getTimezoneOffset()
-    );
-
-    let endTime = structuredClone(data.EndTime);
-    endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset());
     const body = {
       title: data.Subject,
       description: data.Description,
       location: data.Location,
-      start_datetime: startTime,
-      end_datetime: endTime,
+      start_datetime: data.StartTime,
+      end_datetime: data.EndTime,
       is_all_day: data.IsAllDay,
       start_timezone: data.StartTimezone,
       end_timezone: data.EndTimezone,
