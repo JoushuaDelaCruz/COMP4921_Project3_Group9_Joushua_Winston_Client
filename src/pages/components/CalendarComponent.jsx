@@ -96,13 +96,6 @@ export default function Calendar() {
 
   const addEvent = async (data) => {
     data.Uuid = uuidv4();
-    // let startTime = structuredClone(data.StartTime);
-    // startTime.setMinutes(
-    //   startTime.getMinutes() - startTime.getTimezoneOffset()
-    // );
-
-    // let endTime = structuredClone(data.EndTime);
-    // endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset());
     const body = {
       title: data.Subject,
       description: data.Description,
@@ -122,6 +115,9 @@ export default function Calendar() {
     if (!response) {
       alert("ERROR ADDING EVENT");
     }
+
+    scheduleObj.current.addEvent([body]);
+    buttonObj.current.element.setAttribute('disabled', 'true');
   };
 
   const updateEvent = async (data) => {
