@@ -1,8 +1,22 @@
-# React + Vite
+# MakeItHappen || EvenTogether
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Official Link: https://project3-make-it-happen.netlify.app/
 
-Currently, two official plugins are available:
+## Project Overview:
+A responsive and animated website for friends to collaborate future events together, inspired by Google Calendar.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technologies Used:
+* React
+* TailwindCSS
+
+## Key Features:
+* Interactive calendar
+* Recommended friend list
+* Group creation
+* Event creation
+* Repeating events
+* Event and friend requests notification system
+* Event Bin
+
+## Future Development Notes:
+* Create a UI for Groups
