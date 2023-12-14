@@ -21,3 +21,4 @@ A responsive and animated website for friends to collaborate future events toget
 ## Future Development Notes:
 * Create a UI for Groups
 * Refactor the Tailwind CSS to SCSS/CSS external files
+* Create the 404 page
